@@ -3,6 +3,7 @@ package com.stream.video.service;
 import com.stream.video.dto.VideoDto;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +12,7 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Service
 @Qualifier("LocalVideoService")
 public class LocalVideoServiceImpl implements VideoService {
     @Value("${video.dir}")
@@ -43,6 +45,6 @@ public class LocalVideoServiceImpl implements VideoService {
     }
 
     private Path getVideoPath(String id) {
-        return Paths.get(videoDir, id, ".MOV");
+        return Paths.get(videoDir, id + ".MOV");
     }
 }
