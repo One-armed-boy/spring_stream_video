@@ -1,12 +1,11 @@
 package com.stream.video.service;
 
 import com.stream.video.dto.VideoDto;
+import org.springframework.core.io.Resource;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.FileNotFoundException;
 
 public interface VideoService {
-    public VideoDto getVideoMetadata(String id);
-    public void setVideoOutputStream(OutputStream outputStream, VideoDto videoDto) throws IOException;
+    public VideoDto getVideoMetadata(String id) throws FileNotFoundException;
+    public Resource createVideoStream(VideoDto videoDto) throws FileNotFoundException;
 }

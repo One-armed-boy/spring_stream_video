@@ -3,12 +3,11 @@ package com.stream.video.service;
 import com.stream.video.dto.VideoDto;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -19,29 +18,19 @@ public class LocalVideoServiceImpl implements VideoService {
     String videoDir;
 
     @Override
-    public VideoDto getVideoMetadata(String id) {
+    public VideoDto getVideoMetadata(String id) throws FileNotFoundException {
         Path videoPath = getVideoPath(id);
         File file = new File(videoPath.toString());
+        if (!file.exists()) {
+            throw new FileNotFoundException();
+        }
         return VideoDto.builder().id(id).length(file.length()).build();
     }
 
     @Override
-    public void setVideoOutputStream(OutputStream outputStream, VideoDto videoDto) {
+    public Resource createVideoStream(VideoDto videoDto) throws FileNotFoundException {
         Path videoPath = getVideoPath(videoDto.id);
-        File file = new File(videoPath.toString());
-        try {
-            final InputStream inputStream = new FileInputStream(file);
-
-            byte[] bytes = new byte[1024];
-            int length;
-            while ((length = inputStream.read(bytes)) >=0) {
-                outputStream.write(bytes,0, length);
-            }
-            inputStream.close();
-            outputStream.close();
-        } catch (Exception err) {
-            System.out.println(err);
-        }
+        return new InputStreamResource(new FileInputStream(videoPath.toString()));
     }
 
     private Path getVideoPath(String id) {
