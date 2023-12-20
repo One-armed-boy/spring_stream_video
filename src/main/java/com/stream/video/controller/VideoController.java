@@ -28,8 +28,12 @@ public class VideoController {
 
     @GetMapping(path = "/videos", params = "id")
     public ResponseEntity<VideoDto> getVideo(@RequestParam long id) {
-        VideoDto videoDto = videoService.getVideoMetadata(id);
-        return ResponseEntity.ok().body(videoDto);
+        try {
+            VideoDto videoDto = videoService.getVideoMetadata(id);
+            return ResponseEntity.ok().body(videoDto);
+        } catch (final Exception err) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping(path = "/videos/stream", params = "id")

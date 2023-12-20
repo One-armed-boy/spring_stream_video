@@ -3,6 +3,7 @@ package com.stream.video.service;
 import com.stream.video.domain.Video;
 import com.stream.video.dto.VideoDto;
 import com.stream.video.repository.VideoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class LocalVideoServiceImpl implements VideoService {
     }
 
     @Override
-    public VideoDto getVideoMetadata(long id) {
+    public VideoDto getVideoMetadata(long id) throws EntityNotFoundException {
         Video video = videoRepository.getReferenceById(id);
         return convertDomainToDto(video);
     }
