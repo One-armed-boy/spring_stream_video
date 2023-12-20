@@ -16,7 +16,7 @@ public class Video {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private long id;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
@@ -30,6 +30,9 @@ public class Video {
     @Column(name = "size", nullable = false)
     private long size;
 
+    @Column(name = "description")
+    private String description;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -39,11 +42,12 @@ public class Video {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Video(int id, String fileName, String extension, String path, long size) {
+    public Video(long id, String fileName, String extension, String path, long size, String description) {
         this.id = id;
         this.fileName = fileName;
         this.extension = extension;
         this.path = path;
         this.size = size;
+        this.description = description;
     }
 }
