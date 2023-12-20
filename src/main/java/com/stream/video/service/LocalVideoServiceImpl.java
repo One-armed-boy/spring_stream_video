@@ -1,6 +1,9 @@
 package com.stream.video.service;
 
+import com.stream.video.domain.Video;
 import com.stream.video.dto.VideoDto;
+import com.stream.video.repository.VideoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -10,30 +13,45 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Service
 @Qualifier("LocalVideoService")
 public class LocalVideoServiceImpl implements VideoService {
+    @Autowired
+    private VideoRepository videoRepository;
+
     @Value("${video.dir}")
     String videoDir;
 
     @Override
-    public VideoDto getVideoMetadata(String id) throws FileNotFoundException {
-        Path videoPath = getVideoPath(id);
-        File file = new File(videoPath.toString());
-        if (!file.exists()) {
-            throw new FileNotFoundException();
-        }
-        return VideoDto.builder().id(id).length(file.length()).build();
+    public List<VideoDto> listVideo() {
+        List<Video> videoList = videoRepository.findAll();
+        return videoList.stream()
+                .map(video -> convertDomainToDto(video))
+                .toList();
     }
 
     @Override
-    public Resource createVideoStream(VideoDto videoDto) throws FileNotFoundException {
-        Path videoPath = getVideoPath(videoDto.id);
+    public VideoDto getVideoMetadata(long id) {
+        Video video = videoRepository.getReferenceById(id);
+        return convertDomainToDto(video);
+    }
+
+    @Override
+    public Resource createVideoStream(long id) throws FileNotFoundException {
+        Video video = videoRepository.getReferenceById(id);
+        Path videoPath = Paths.get(video.getPath());
         return new InputStreamResource(new FileInputStream(videoPath.toString()));
     }
 
-    private Path getVideoPath(String id) {
-        return Paths.get(videoDir, id + ".MOV");
+    private VideoDto convertDomainToDto(Video video) {
+        return VideoDto.builder()
+                .id(video.getId())
+                .fileName(video.getFileName())
+                .size(video.getSize())
+                .description(video.getDescription())
+                .createdAt(video.getCreatedAt())
+                .build();
     }
 }

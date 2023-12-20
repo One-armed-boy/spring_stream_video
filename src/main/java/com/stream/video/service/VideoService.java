@@ -4,8 +4,10 @@ import com.stream.video.dto.VideoDto;
 import org.springframework.core.io.Resource;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public interface VideoService {
-    public VideoDto getVideoMetadata(String id) throws FileNotFoundException;
-    public Resource createVideoStream(VideoDto videoDto) throws FileNotFoundException;
+    List<VideoDto> listVideo();
+    VideoDto getVideoMetadata(long id);
+    Resource createVideoStream(long id) throws FileNotFoundException;
 }
