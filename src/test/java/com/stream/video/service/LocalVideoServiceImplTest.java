@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Transactional
@@ -45,21 +47,9 @@ class LocalVideoServiceImplTest {
   @DisplayName("DB 내 Video 데이터가 존재 > listVideo 호출 > 데이터들 반환")
   void testListVideo() {
     // Given
-    String videoDir = "./videos";
-    Video video1 = Video.builder()
-            .id(1)
-            .fileName("video1")
-            .extension("MOV")
-            .path(videoDir + "video1.MOV")
-            .size(1000)
-            .build();
-    Video video2 = Video.builder()
-            .id(2)
-            .fileName("video2")
-            .extension("MOV")
-            .path(videoDir + "video2.MOV")
-            .size(2000)
-            .build();
+    Video video1 = createVideoEntity("video1");
+    Video video2 = createVideoEntity("video2");
+
     List<Video> videoListForSave = List.of(video1, video2);
     videoRepository.saveAll(videoListForSave);
 
@@ -68,6 +58,11 @@ class LocalVideoServiceImplTest {
     List<VideoDto> videoDtoForSaveList = videoListForSave.stream().map((video) -> {
       return VideoDto.builder().id(video.getId()).size(video.getSize()).fileName(video.getFileName()).build();
     }).toList();
+
+    for (VideoDto videoDto : videoDtoList) {
+      System.out.println(videoDto.id);
+      System.out.println(videoDto.fileName);
+    }
 
     // Then
     Assertions.assertThat(videoDtoList.size()).isEqualTo(videoListForSave.size());
@@ -79,4 +74,47 @@ class LocalVideoServiceImplTest {
       Assertions.assertThat(videoDto.createdAt).isNotNull();
     }
   }
+
+  @Test
+  @DisplayName("빈 DB > getVideo 호출 > 예외 발생")
+  void testEmptyGetVideo() {
+    // Given
+    try {
+      // When
+      videoService.getVideoMetadata(0);
+
+      // 호출이 된다면 에러가 발생하지 않은 것
+      Assertions.assertThat(true).isEqualTo(false);
+    } catch (Exception err) {
+      // Then
+      Assertions.assertThat(err).isInstanceOf(Exception.class);
+    }
+  }
+
+  @Test
+  @DisplayName("DB 내 조회할 데이터가 존재 > getVideo 호출 > 조회 성공")
+  void testGetVideo() {
+    // Given
+    Video videoForSave = createVideoEntity("video");
+    videoRepository.save(videoForSave);
+    Optional<Video> videoInDB = videoRepository.findOne(Example.of(videoForSave));
+    Assertions.assertThat(videoInDB.isPresent()).isEqualTo(true);
+
+    // When
+    VideoDto videoDto = videoService.getVideoMetadata(videoInDB.get().getId());
+
+    // Then
+    Assertions.assertThat(videoDto.id).isEqualTo(videoForSave.getId());
+    Assertions.assertThat(videoDto.fileName).isEqualTo(videoForSave.getFileName());
+  }
+
+  private Video createVideoEntity(String fileName) {
+    return Video.builder()
+            .fileName(fileName)
+            .extension("MOV")
+            .path(fileName + ".MOV")
+            .size(1000)
+            .build();
+  }
+
 }
