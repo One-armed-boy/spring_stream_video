@@ -18,6 +18,7 @@ public class VideoDto {
     return VideoDto.builder()
             .id(video.getId())
             .fileTag(video.getFileTag())
+            .extension(video.getExtension())
             .size(video.getSize())
             .description(video.getDescription())
             .createdAt(video.getCreatedAt())
