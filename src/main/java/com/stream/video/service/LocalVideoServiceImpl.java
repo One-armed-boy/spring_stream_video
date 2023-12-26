@@ -14,8 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -47,8 +46,44 @@ public class LocalVideoServiceImpl implements VideoService {
   @Override
   @Async
   public CompletableFuture uploadVideoAsync(UploadVideoDto videoMetadata, MultipartFile videoFile) {
-    // TODO: 비동기 파일 업로드 로직 구현
-    return CompletableFuture.completedFuture(null);
+    try {
+      if (videoFile.isEmpty()) {
+        throw new EmptyFileUploadException();
+      }
+      File targetDir = new File(videoDir);
+      checkTargetDir(targetDir);
+
+      File fileForUpload = new File(targetDir.getAbsoluteFile(), videoMetadata.getFileName() + "." +
+              videoMetadata.getExtension()
+      );
+
+      writeFile(fileForUpload, videoFile);
+      // TODO: 파일 저장 후 후처리 로직 작성
+    } catch (Exception err) {
+      // TODO: 로거 도입
+      System.out.println(err);
+    } finally {
+      return CompletableFuture.completedFuture(null);
+    }
+  }
+
+  private void writeFile(File fileForUpload, MultipartFile videoData) throws IOException {
+    InputStream inputStream = videoData.getInputStream();
+    OutputStream outputStream = new FileOutputStream(fileForUpload);
+
+    byte[] buffer = new byte[1024];
+    int bytesRead;
+
+    while ((bytesRead = inputStream.read(buffer)) != -1) {
+      outputStream.write(buffer, 0, bytesRead);
+    }
+  }
+
+  private void checkTargetDir(File targetDir) {
+    if (targetDir.exists()) {
+      return;
+    }
+    targetDir.mkdir();
   }
 
   @Override
