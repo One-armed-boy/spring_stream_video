@@ -59,11 +59,6 @@ class LocalVideoServiceImplTest {
       return VideoDto.builder().id(video.getId()).size(video.getSize()).fileTag(video.getFileTag()).build();
     }).toList();
 
-    for (VideoDto videoDto : videoDtoList) {
-      System.out.println(videoDto.id);
-      System.out.println(videoDto.fileTag);
-    }
-
     // Then
     Assertions.assertThat(videoDtoList.size()).isEqualTo(videoListForSave.size());
     for (VideoDto videoDto : videoDtoList) {
@@ -72,6 +67,7 @@ class LocalVideoServiceImplTest {
       Assertions.assertThat(videoDto.fileTag)
               .isIn(videoDtoForSaveList.stream().map((video) -> video.fileTag).toList());
       Assertions.assertThat(videoDto.createdAt).isNotNull();
+      Assertions.assertThat(videoDto.extension).isNotNull();
     }
   }
 
@@ -106,6 +102,7 @@ class LocalVideoServiceImplTest {
     // Then
     Assertions.assertThat(videoDto.id).isEqualTo(videoForSave.getId());
     Assertions.assertThat(videoDto.fileTag).isEqualTo(videoForSave.getFileTag());
+    Assertions.assertThat(videoDto.extension).isEqualTo(videoForSave.getExtension());
   }
 
   private Video createVideoEntity(String fileName) {
