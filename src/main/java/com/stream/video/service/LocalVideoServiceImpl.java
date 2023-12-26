@@ -33,14 +33,14 @@ public class LocalVideoServiceImpl implements VideoService {
   public List<VideoDto> listVideo() {
     List<Video> videoList = videoRepository.findAll();
     return videoList.stream()
-            .map(video -> convertDomainToDto(video))
+            .map(video -> VideoDto.convertDomainToDto(video))
             .toList();
   }
 
   @Override
   public VideoDto getVideoMetadata(long id) throws EntityNotFoundException {
     Video video = videoRepository.getReferenceById(id);
-    return convertDomainToDto(video);
+    return VideoDto.convertDomainToDto(video);
   }
 
   @Override
@@ -91,15 +91,5 @@ public class LocalVideoServiceImpl implements VideoService {
     Video video = videoRepository.getReferenceById(id);
     Path videoPath = Paths.get(video.getPath());
     return new InputStreamResource(new FileInputStream(videoPath.toString()));
-  }
-
-  private VideoDto convertDomainToDto(Video video) {
-    return VideoDto.builder()
-            .id(video.getId())
-            .fileName(video.getFileName())
-            .size(video.getSize())
-            .description(video.getDescription())
-            .createdAt(video.getCreatedAt())
-            .build();
   }
 }
