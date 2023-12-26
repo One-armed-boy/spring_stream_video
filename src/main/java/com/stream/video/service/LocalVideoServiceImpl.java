@@ -18,6 +18,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -45,20 +46,22 @@ public class LocalVideoServiceImpl implements VideoService {
 
   @Override
   @Async
-  public CompletableFuture uploadVideoAsync(UploadVideoDto videoMetadata, MultipartFile videoFile) {
+  public CompletableFuture uploadVideoAsync(UploadVideoDto videoMetadata, MultipartFile videoForUpload) {
     try {
-      if (videoFile.isEmpty()) {
+      if (videoForUpload.isEmpty()) {
         throw new EmptyFileUploadException();
       }
       File targetDir = new File(videoDir);
       checkTargetDir(targetDir);
 
-      File fileForUpload = new File(targetDir.getAbsoluteFile(), videoMetadata.getFileName() + "." +
-              videoMetadata.getExtension()
-      );
+      String targetPath = Paths.get(targetDir.getAbsolutePath(), createRandomName(videoMetadata.getExtension()))
+              .toAbsolutePath()
+              .toString();
+      File targetFile = new File(targetPath);
 
-      writeFile(fileForUpload, videoFile);
-      // TODO: 파일 저장 후 후처리 로직 작성
+      saveFile(targetFile, videoForUpload);
+
+      execPostSave(videoMetadata, targetPath, videoForUpload.getSize());
     } catch (Exception err) {
       // TODO: 로거 도입
       System.out.println(err);
@@ -67,9 +70,16 @@ public class LocalVideoServiceImpl implements VideoService {
     }
   }
 
-  private void writeFile(File fileForUpload, MultipartFile videoData) throws IOException {
+  private void checkTargetDir(File targetDir) {
+    if (targetDir.exists()) {
+      return;
+    }
+    targetDir.mkdir();
+  }
+
+  private void saveFile(File targetFile, MultipartFile videoData) throws IOException {
     InputStream inputStream = videoData.getInputStream();
-    OutputStream outputStream = new FileOutputStream(fileForUpload);
+    OutputStream outputStream = new FileOutputStream(targetFile);
 
     byte[] buffer = new byte[1024];
     int bytesRead;
@@ -79,11 +89,20 @@ public class LocalVideoServiceImpl implements VideoService {
     }
   }
 
-  private void checkTargetDir(File targetDir) {
-    if (targetDir.exists()) {
-      return;
-    }
-    targetDir.mkdir();
+  private String createRandomName(String extension) {
+    return UUID.randomUUID() + "." + extension;
+  }
+
+  private void execPostSave(UploadVideoDto videoMetadata, String targetPath, long fileSize) {
+    System.out.println(videoMetadata.getExtension());
+    videoRepository.save(Video.builder()
+            .fileTag(videoMetadata.getFileName())
+            .extension(videoMetadata.getExtension())
+            .path(targetPath)
+            .size(fileSize)
+            .description(videoMetadata.getDescription())
+            .build());
+    // TODO: SSE를 통한 저장 완료 이벤트 처리
   }
 
   @Override
