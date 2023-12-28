@@ -36,9 +36,10 @@ video:
 
 `./gradlew bootrun`
 
-## EP (향후 지원 예정)
+## EP
 
 - 서버 실행 후 OpenAPI(Swagger)를 통해 확인
+- /swagger-ui/index.html
 
 ## 비디오 저장소
 
