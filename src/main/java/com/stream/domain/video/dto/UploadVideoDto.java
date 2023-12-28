@@ -1,4 +1,4 @@
-package com.stream.video.dto;
+package com.stream.domain.video.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.stream.video.service;
+package com.stream.domain.video.exception;
 
 public class EmptyFileUploadException extends RuntimeException {
   public EmptyFileUploadException() {
