@@ -1,4 +1,4 @@
-package com.stream.video.domain;
+package com.stream.domain.video;
 
 import jakarta.persistence.*;
 import lombok.Builder;

@@ -1,6 +1,5 @@
-package com.stream.video.repository;
+package com.stream.domain.video;
 
-import com.stream.video.domain.Video;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VideoRepository extends JpaRepository<Video, Long> {

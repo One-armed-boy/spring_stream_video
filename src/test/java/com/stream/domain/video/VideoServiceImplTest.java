@@ -1,14 +1,11 @@
-package com.stream.video.service;
+package com.stream.domain.video;
 
-import com.stream.video.domain.Video;
-import com.stream.video.dto.VideoDto;
-import com.stream.video.repository.VideoRepository;
+import com.stream.domain.video.dto.VideoDto;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 
@@ -18,18 +15,17 @@ import java.util.Optional;
 
 @Transactional
 @SpringBootTest
-class LocalVideoServiceImplTest {
+class VideoServiceImplTest {
   @Autowired
-  @Qualifier("LocalVideoService")
   private VideoService videoService;
 
   @Autowired
   private VideoRepository videoRepository;
 
   @Test
-  @DisplayName("Qualifier를 통해 정상적으로 DI가 이루어지는지 테스트")
+  @DisplayName("정상적으로 DI가 이루어지는지 테스트")
   void testDi() {
-    Assertions.assertThat(videoService).isInstanceOf(LocalVideoServiceImpl.class);
+    Assertions.assertThat(videoService).isInstanceOf(VideoServiceImpl.class);
   }
 
   @Test
@@ -51,7 +47,7 @@ class LocalVideoServiceImplTest {
     Video video2 = createVideoEntity("video2");
 
     List<Video> videoListForSave = List.of(video1, video2);
-    videoRepository.saveAll(videoListForSave);
+    videoService.createVideo(video1, video2);
 
     // When
     List<VideoDto> videoDtoList = videoService.listVideo();
@@ -92,7 +88,9 @@ class LocalVideoServiceImplTest {
   void testGetVideo() {
     // Given
     Video videoForSave = createVideoEntity("video");
-    videoRepository.save(videoForSave);
+
+    videoService.createVideo(videoForSave);
+
     Optional<Video> videoInDB = videoRepository.findOne(Example.of(videoForSave));
     Assertions.assertThat(videoInDB.isPresent()).isEqualTo(true);
 
@@ -103,6 +101,22 @@ class LocalVideoServiceImplTest {
     Assertions.assertThat(videoDto.id).isEqualTo(videoForSave.getId());
     Assertions.assertThat(videoDto.fileTag).isEqualTo(videoForSave.getFileTag());
     Assertions.assertThat(videoDto.extension).isEqualTo(videoForSave.getExtension());
+  }
+
+  @Test
+  @DisplayName("빈 DB > createVideo 호출 > 이후 조회 시 성공")
+  void testCreateVideo() {
+    // Given
+    // When
+    Video videoForSave = createVideoEntity("test");
+    videoService.createVideo(videoForSave);
+
+    // Then
+    List<VideoDto> videoDtoList = videoService.listVideo();
+    Assertions.assertThat(videoDtoList.size()).isEqualTo(1);
+
+    VideoDto videoDto = videoDtoList.get(0);
+    Assertions.assertThat(videoDto.fileTag).isEqualTo(videoForSave.getFileTag());
   }
 
   private Video createVideoEntity(String fileName) {

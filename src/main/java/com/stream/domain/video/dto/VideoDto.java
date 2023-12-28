@@ -1,6 +1,6 @@
-package com.stream.video.dto;
+package com.stream.domain.video.dto;
 
-import com.stream.video.domain.Video;
+import com.stream.domain.video.Video;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
