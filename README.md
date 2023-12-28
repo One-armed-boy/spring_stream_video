@@ -1,11 +1,52 @@
 # Spring Stream Video
-## 실행
+
+## 실행법
+
+### 1. application.yml 구성
+
+```yml
+# src/main/resources/application.yml 생성 후 입력
+spring:
+  servlet:
+    multipart:
+      maxFileSize: 1000MB # 파일 하나의 최대 크기
+      maxRequestSize: 1000MB  # 한 번에 최대 업로드 가능 용량
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://{DB 호스트 주소}:{DB 포트}/stream?characterEncoding=UTF-8&serverTimezone=UTC
+    username: { DB 유저명 }
+    password: { DB 유저 비밀번호 }
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+video:
+  dir: ./videos
+
+```
+
+### 2. 외부 의존성 실행 (ex. DB)
+
+`docker-compose up -d`
+
+### 3. 서버 실행
+
 `./gradlew bootrun`
-## 컨텍스트
-### 로컬 동영상 이용
-1. 동영상을 담을 디렉터리를 생성 후에, application.properties에 경로를 아래와 같이 기록
-`video.dir={디렉터리 경로}`
-2. 디렉터리 내에 아래 형태로 파일 저장(확장자는 .MOV 고정)
-`{파일 id}.MOV`
-3. 요청 시 param에 파일 id 포함
-`ex. /videos?id={파일 id}`
+
+## EP (향후 지원 예정)
+
+- 서버 실행 후 OpenAPI(Swagger)를 통해 확인
+
+## 비디오 저장소
+
+### 현재 지원
+
+- 로컬 파일시스템
+
+### 향후 지원 계획
+
+- SeaweedFS (로컬 스토리지 서비스)
+- Aws S3
