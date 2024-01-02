@@ -12,8 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class UploadController {
+  private final UploadFacade uploadFacade;
+
   @Autowired
-  private UploadFacade uploadFacade;
+  public UploadController(UploadFacade uploadFacade) {
+    this.uploadFacade = uploadFacade;
+  }
 
   @PostMapping(path = "/videos/upload")
   public ResponseEntity uploadVideo(

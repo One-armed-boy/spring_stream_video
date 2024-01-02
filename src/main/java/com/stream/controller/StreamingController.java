@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class StreamingController {
+  private final StreamingFacade streamingFacade;
+
   @Autowired
-  private StreamingFacade streamingFacade;
+  public StreamingController(StreamingFacade streamingFacade) {
+    this.streamingFacade = streamingFacade;
+  }
 
   @GetMapping(path = "/videos/stream", params = "id")
   public ResponseEntity<Resource> getVideoStream(@RequestParam long id) {

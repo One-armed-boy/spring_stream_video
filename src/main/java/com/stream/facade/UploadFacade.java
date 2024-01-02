@@ -15,11 +15,14 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class UploadFacade {
-  @Autowired
-  private VideoService videoService;
+  private final VideoService videoService;
+  private final StorageStrategy storageStrategy;
 
   @Autowired
-  private StorageStrategy storageStrategy;
+  public UploadFacade(VideoService videoService, StorageStrategy storageStrategy) {
+    this.videoService = videoService;
+    this.storageStrategy = storageStrategy;
+  }
 
   public CompletableFuture uploadVideoSync(UploadVideoDto videoMetadata, MultipartFile videoForUpload) {
     try {
