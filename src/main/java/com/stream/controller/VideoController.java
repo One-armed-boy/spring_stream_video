@@ -12,8 +12,12 @@ import java.util.List;
 
 @RestController
 public class VideoController {
+  private final VideoService videoService;
+
   @Autowired
-  private VideoService videoService;
+  public VideoController(VideoService videoService) {
+    this.videoService = videoService;
+  }
 
   @GetMapping(path = "/videos")
   public ResponseEntity<List<VideoDto>> listVideo() {

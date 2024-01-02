@@ -12,11 +12,14 @@ import java.nio.file.Paths;
 
 @Service
 public class StreamingFacade {
-  @Autowired
-  private VideoService videoService;
+  private final VideoService videoService;
+  private final StorageStrategy storageStrategy;
 
   @Autowired
-  private StorageStrategy storageStrategy;
+  public StreamingFacade(VideoService videoService, StorageStrategy storageStrategy) {
+    this.videoService = videoService;
+    this.storageStrategy = storageStrategy;
+  }
 
   public Resource createVideoStream(long videoId) {
     String path = videoService.getVideoFilePath(videoId);
