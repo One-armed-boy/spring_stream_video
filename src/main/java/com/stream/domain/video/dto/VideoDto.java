@@ -1,18 +1,21 @@
 package com.stream.domain.video.dto;
 
 import com.stream.domain.video.Video;
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Builder
+@Getter
 public class VideoDto {
-  public long id;
-  public String fileTag;
-  public String extension;
-  public long size;
-  public String description;
-  public LocalDateTime createdAt;
+  private long id;
+  private String fileTag;
+  private String extension;
+  private long size;
+  private String description;
+  private LocalDateTime createdAt;
 
   public static VideoDto convertDomainToDto(Video video) {
     return VideoDto.builder()

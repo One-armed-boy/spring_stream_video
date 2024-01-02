@@ -58,12 +58,13 @@ class VideoServiceImplTest {
     // Then
     Assertions.assertThat(videoDtoList.size()).isEqualTo(videoListForSave.size());
     for (VideoDto videoDto : videoDtoList) {
-      Assertions.assertThat(videoDto.id).isIn(videoDtoForSaveList.stream().map((video) -> video.id).toList());
-      Assertions.assertThat(videoDto.size).isIn(videoDtoForSaveList.stream().map((video) -> video.size).toList());
-      Assertions.assertThat(videoDto.fileTag)
-              .isIn(videoDtoForSaveList.stream().map((video) -> video.fileTag).toList());
-      Assertions.assertThat(videoDto.createdAt).isNotNull();
-      Assertions.assertThat(videoDto.extension).isNotNull();
+      Assertions.assertThat(videoDto.getId()).isIn(videoDtoForSaveList.stream().map((video) -> video.getId()).toList());
+      Assertions.assertThat(videoDto.getSize())
+              .isIn(videoDtoForSaveList.stream().map((video) -> video.getSize()).toList());
+      Assertions.assertThat(videoDto.getFileTag())
+              .isIn(videoDtoForSaveList.stream().map((video) -> video.getFileTag()).toList());
+      Assertions.assertThat(videoDto.getCreatedAt()).isNotNull();
+      Assertions.assertThat(videoDto.getExtension()).isNotNull();
     }
   }
 
@@ -98,9 +99,9 @@ class VideoServiceImplTest {
     VideoDto videoDto = videoService.getVideoMetadata(videoInDB.get().getId());
 
     // Then
-    Assertions.assertThat(videoDto.id).isEqualTo(videoForSave.getId());
-    Assertions.assertThat(videoDto.fileTag).isEqualTo(videoForSave.getFileTag());
-    Assertions.assertThat(videoDto.extension).isEqualTo(videoForSave.getExtension());
+    Assertions.assertThat(videoDto.getId()).isEqualTo(videoForSave.getId());
+    Assertions.assertThat(videoDto.getFileTag()).isEqualTo(videoForSave.getFileTag());
+    Assertions.assertThat(videoDto.getExtension()).isEqualTo(videoForSave.getExtension());
   }
 
   @Test
@@ -116,7 +117,7 @@ class VideoServiceImplTest {
     Assertions.assertThat(videoDtoList.size()).isEqualTo(1);
 
     VideoDto videoDto = videoDtoList.get(0);
-    Assertions.assertThat(videoDto.fileTag).isEqualTo(videoForSave.getFileTag());
+    Assertions.assertThat(videoDto.getFileTag()).isEqualTo(videoForSave.getFileTag());
   }
 
   private Video createVideoEntity(String fileName) {
