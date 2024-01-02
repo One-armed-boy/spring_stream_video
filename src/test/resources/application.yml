@@ -10,5 +10,8 @@ spring:
     hibernate:
       ddl-auto: create
 
-video:
-  dir: ./videos
+my:
+  app:
+    storage:
+      type: local
+      localStorageDir: ./videos

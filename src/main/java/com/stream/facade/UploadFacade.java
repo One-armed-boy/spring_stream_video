@@ -6,7 +6,6 @@ import com.stream.domain.video.dto.UploadVideoDto;
 import com.stream.domain.video.exception.EmptyFileUploadException;
 import com.stream.storage.StorageStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +19,6 @@ public class UploadFacade {
   private VideoService videoService;
 
   @Autowired
-  @Qualifier("LocalStorageStrategy")
   private StorageStrategy storageStrategy;
 
   public CompletableFuture uploadVideoSync(UploadVideoDto videoMetadata, MultipartFile videoForUpload) {

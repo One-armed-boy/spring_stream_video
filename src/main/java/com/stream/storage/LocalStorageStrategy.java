@@ -3,19 +3,15 @@ package com.stream.storage;
 import com.stream.domain.video.dto.UploadVideoDto;
 import com.stream.storage.exception.FileStreamingException;
 import com.stream.storage.exception.FileUploadException;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-@Component
-@Qualifier("LocalStorageStrategy")
 public class LocalStorageStrategy implements StorageStrategy {
-  @Value("${video.dir}")
+  @Value("${my.app.storage.localStorageDir}")
   private String videoDir;
 
   @Override

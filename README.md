@@ -23,8 +23,11 @@ spring:
     hibernate:
       ddl-auto: update
 
-video:
-  dir: ./videos
+my:
+  app:
+    storage:
+      type: local
+      localStorageDir: ./videos
 
 ```
 
