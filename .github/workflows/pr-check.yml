@@ -3,6 +3,10 @@ name: Check PR
 on:
   pull_request
 
+permissions:
+  checks: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,4 +36,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          files: build/test-results/**/*.xml
+          files: |
+            build/test-results/**/*.xml
+            build/test-results/**/*.trx
+            build/test-results/**/*.json
