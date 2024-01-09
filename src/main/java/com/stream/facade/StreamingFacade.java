@@ -7,9 +7,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 @Service
 public class StreamingFacade {
   private final VideoService videoService;
@@ -23,7 +20,6 @@ public class StreamingFacade {
 
   public Resource createVideoStream(long videoId) {
     String path = videoService.getVideoFilePath(videoId);
-    Path absPath = Paths.get(path).toAbsolutePath();
-    return new InputStreamResource(storageStrategy.createFileStream(absPath.toString()));
+    return new InputStreamResource(storageStrategy.createFileStream(path));
   }
 }
