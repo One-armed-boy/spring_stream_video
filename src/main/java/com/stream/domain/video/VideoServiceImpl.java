@@ -4,10 +4,12 @@ import com.stream.domain.video.dto.VideoDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class VideoServiceImpl implements VideoService {
   private final VideoRepository videoRepository;
 
@@ -41,6 +43,7 @@ public class VideoServiceImpl implements VideoService {
   }
 
   @Override
+  @Transactional
   public void createVideo(Video... video) {
     videoRepository.saveAll(List.of(video));
   }
