@@ -44,6 +44,11 @@ my:
 - 서버 실행 후 OpenAPI(Swagger)를 통해 확인
 - /swagger-ui/index.html
 
+## 코드 컨벤션
+
+- .editorconfig, checkstyle 활용을 통한 컨벤션 강제
+- 참조 (https://naver.github.io/hackday-conventions-java/)
+
 ## 비디오 저장소
 
 ### 현재 지원
