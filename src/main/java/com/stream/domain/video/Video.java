@@ -1,6 +1,6 @@
 package com.stream.domain.video;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -11,6 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,12 +43,14 @@ public class Video {
 	private String description;
 
 	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt;
+	private Date createdAt;
 
 	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updated_at", nullable = false)
-	private LocalDateTime updatedAt;
+	private Date updatedAt;
 
 	@Builder
 	public Video(long id, String fileTag, String extension, String path, long size, String description) {
