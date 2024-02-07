@@ -1,4 +1,4 @@
-package com.stream.domain.user;
+package com.stream.domain.member;
 
 import java.util.Date;
 
@@ -26,7 +26,7 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
-	@Column(name = "email", nullable = false)
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
 	@Column(name = "password", nullable = false)
