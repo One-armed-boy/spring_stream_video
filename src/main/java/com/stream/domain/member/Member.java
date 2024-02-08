@@ -37,10 +37,18 @@ public class Member {
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Date createdAt;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "last_login_at")
+	private Date lastLoginAt;
+
 	@Builder
 	public Member(long id, String email, String password) {
 		this.id = id;
 		this.email = email;
 		this.password = password;
+	}
+
+	public void login(Date loginAt) {
+		this.lastLoginAt = loginAt;
 	}
 }
