@@ -37,6 +37,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'com.auth0:java-jwt:4.2.1'
 
     // ETC
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'

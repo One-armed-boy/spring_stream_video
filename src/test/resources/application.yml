@@ -24,3 +24,6 @@ my:
     storage:
       type: local
       localStorageDir: ./videos
+    jwt:
+      signingKey: sdnkavnrkwnaldfjndxlsjfjndskjv
+
