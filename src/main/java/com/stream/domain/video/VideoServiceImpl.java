@@ -24,7 +24,7 @@ public class VideoServiceImpl implements VideoService {
 	public List<VideoDto> listVideo() {
 		List<Video> videoList = videoRepository.findAll();
 		return videoList.stream()
-			.map(video -> VideoDto.convertDomainToDto(video))
+			.map(VideoDto::convertDomainToDto)
 			.toList();
 	}
 
