@@ -56,6 +56,6 @@ public class Member {
 	}
 
 	public void login(Date loginAt) {
-		this.lastLoginAt = loginAt;
+		lastLoginAt = loginAt;
 	}
 }

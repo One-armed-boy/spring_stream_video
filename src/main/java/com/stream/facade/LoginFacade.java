@@ -33,9 +33,9 @@ public class LoginFacade {
 		String email = command.getEmail();
 		String inputPassword = command.getInputPassword();
 
-		Member member = this.memberService.getMemberByEmail(email);
+		Member member = memberService.getMemberByEmail(email);
 
-		if (!this.passwordEncoder.matches(inputPassword, member.getPassword())) {
+		if (!passwordEncoder.matches(inputPassword, member.getPassword())) {
 			throw new IncorrectPasswordException();
 		}
 		member.login(new Date());

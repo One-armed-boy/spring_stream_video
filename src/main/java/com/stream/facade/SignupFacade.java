@@ -3,6 +3,7 @@ package com.stream.facade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.stream.domain.member.Member;
 import com.stream.domain.member.MemberService;
@@ -25,13 +26,14 @@ public class SignupFacade {
 		this.passwordEncoder = passwordEncoder;
 	}
 
+	@Transactional
 	public SignupResult signUp(SignupCommand command) {
-		Member member = this.memberService.create(
+		Member member = memberService.create(
 			CreateMemberCommand.builder()
 				.email(command.getEmail())
-				.encryptedPassword(this.passwordEncoder.encode(command.getPassword()))
+				.encryptedPassword(passwordEncoder.encode(command.getPassword()))
 				// TODO: 임시로 일괄 User 권한을 갖도록 작성한 것 수정
-				.role(this.roleService.getRoleByName(RolesEnum.USER))
+				.role(roleService.getRoleByName(RolesEnum.USER))
 				.build());
 		return SignupResult.builder().email(member.getEmail()).signupDate(member.getCreatedAt()).build();
 	}

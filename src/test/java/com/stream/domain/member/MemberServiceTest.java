@@ -48,8 +48,8 @@ public class MemberServiceTest {
 
 	@AfterEach
 	void cleanDB() {
-		this.memberRepository.deleteAll();
-		this.roleRepository.deleteAll();
+		memberRepository.deleteAll();
+		roleRepository.deleteAll();
 	}
 
 	@Test
@@ -66,10 +66,10 @@ public class MemberServiceTest {
 			.build();
 
 		// when
-		this.memberService.create(createCommand);
+		memberService.create(createCommand);
 
 		// then
-		List<Member> members = this.memberRepository.findAll();
+		List<Member> members = memberRepository.findAll();
 		Assertions.assertThat(members.size()).isEqualTo(1);
 
 		Member member = members.get(0);
@@ -82,9 +82,9 @@ public class MemberServiceTest {
 	void createDuplicatedMember() {
 		// given
 		String mockEmail = "abc@test.com";
-		String mockPwd = this.passwordEncoder.encode("abcdefg");
+		String mockPwd = passwordEncoder.encode("abcdefg");
 		Role role = roleService.getRoleByName(RolesEnum.USER);
-		this.memberService.create(CreateMemberCommand.builder().email(mockEmail).encryptedPassword(mockPwd).build());
+		memberService.create(CreateMemberCommand.builder().email(mockEmail).encryptedPassword(mockPwd).build());
 		CreateMemberCommand commandForCreateDuplicatedEmail = CreateMemberCommand.builder()
 			.email(mockEmail)
 			.encryptedPassword(mockPwd)
@@ -93,7 +93,7 @@ public class MemberServiceTest {
 
 		Assertions.assertThatThrownBy(() -> {
 			// when
-			this.memberService.create(commandForCreateDuplicatedEmail);
+			memberService.create(commandForCreateDuplicatedEmail);
 			// then
 		}).isInstanceOf(DuplicatedMemberCreateException.class);
 	}
@@ -103,11 +103,11 @@ public class MemberServiceTest {
 	void createDifferentMember() {
 		// given
 		String mockEmailInDB = "abc@test.com";
-		String mockPwd = this.passwordEncoder.encode("abcdefg");
+		String mockPwd = passwordEncoder.encode("abcdefg");
 		Role role = roleService.getRoleByName(RolesEnum.USER);
-		this.memberService.create(
+		memberService.create(
 			CreateMemberCommand.builder().email(mockEmailInDB).encryptedPassword(mockPwd).role(role).build());
-		List<Member> membersBeforeTest = this.memberRepository.findAll();
+		List<Member> membersBeforeTest = memberRepository.findAll();
 		Assertions.assertThat(membersBeforeTest.size()).isEqualTo(1);
 
 		String mockEmailNotInDB = "def@test.com";
@@ -118,10 +118,10 @@ public class MemberServiceTest {
 			.build();
 
 		// when
-		this.memberService.create(command);
+		memberService.create(command);
 
 		// then
-		List<Member> membersAfterTest = this.memberRepository.findAll();
+		List<Member> membersAfterTest = memberRepository.findAll();
 		Assertions.assertThat(membersAfterTest.size()).isEqualTo(2);
 	}
 
@@ -130,16 +130,16 @@ public class MemberServiceTest {
 	void getMemberByEmailButNotFound() {
 		// given
 		String mockEmailInDB = "abc@test.com";
-		String mockPwd = this.passwordEncoder.encode("abcdefg");
+		String mockPwd = passwordEncoder.encode("abcdefg");
 		Role role = roleService.getRoleByName(RolesEnum.USER);
-		this.memberService.create(
+		memberService.create(
 			CreateMemberCommand.builder().email(mockEmailInDB).encryptedPassword(mockPwd).role(role).build());
 
 		String mockEmailForSearch = "def@test.com";
 
 		Assertions.assertThatThrownBy(() -> {
 			// when
-			this.memberService.getMemberByEmail(mockEmailForSearch);
+			memberService.getMemberByEmail(mockEmailForSearch);
 			// then
 		}).isInstanceOf(MemberNotFoundException.class);
 	}
@@ -149,13 +149,13 @@ public class MemberServiceTest {
 	void getMemberByEmail() {
 		// given
 		String mockEmail = "abc@test.com";
-		String mockPwd = this.passwordEncoder.encode("abcdefg");
+		String mockPwd = passwordEncoder.encode("abcdefg");
 		Role role = roleService.getRoleByName(RolesEnum.USER);
-		Member memberToSave = this.memberService.create(
+		Member memberToSave = memberService.create(
 			CreateMemberCommand.builder().email(mockEmail).encryptedPassword(mockPwd).role(role).build());
 
 		// when
-		Member memberInDB = this.memberService.getMemberByEmail(mockEmail);
+		Member memberInDB = memberService.getMemberByEmail(mockEmail);
 
 		// then
 		Assertions.assertThat(memberToSave.getId()).isEqualTo(memberInDB.getId());

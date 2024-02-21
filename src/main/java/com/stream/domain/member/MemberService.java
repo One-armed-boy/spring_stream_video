@@ -20,7 +20,7 @@ public class MemberService {
 	}
 
 	public Member getMemberByEmail(String email) {
-		return this.memberRepository.findMemberByEmail(email)
+		return memberRepository.findMemberByEmail(email)
 			.orElseThrow(() -> new MemberNotFoundException(email));
 	}
 
@@ -33,13 +33,13 @@ public class MemberService {
 
 		String password = command.getEncryptedPassword();
 		Role role = command.getRole();
-		return this.memberRepository.save(
+		return memberRepository.save(
 			Member.builder().email(email).password(password).role(role).build());
 	}
 
 	private boolean isMemberExistByEmail(String email) {
 		try {
-			this.getMemberByEmail(email);
+			getMemberByEmail(email);
 			return true;
 		} catch (MemberNotFoundException exception) {
 			return false;

@@ -28,7 +28,7 @@ public class LoginController {
 
 	@PostMapping(path = "/login")
 	public ResponseEntity<LoginResponse> login(@Valid @RequestBody final LoginRequest request) {
-		LoginResult result = this.loginFacade.login(request.toCommand());
+		LoginResult result = loginFacade.login(request.toCommand());
 		return ResponseEntity.ok().body(new LoginResponse(result.getAccessToken()));
 	}
 
@@ -43,7 +43,7 @@ public class LoginController {
 		private String inputPassword;
 
 		public LoginCommand toCommand() {
-			return LoginCommand.builder().email(this.email).inputPassword(this.inputPassword).build();
+			return LoginCommand.builder().email(email).inputPassword(inputPassword).build();
 		}
 	}
 

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,25 +14,27 @@ import org.springframework.mock.web.MockMultipartFile;
 import com.stream.domain.video.Video;
 import com.stream.domain.video.VideoRepository;
 import com.stream.domain.video.VideoService;
-import com.stream.domain.video.VideoServiceImpl;
 import com.stream.domain.video.dto.UploadVideoDto;
 import com.stream.storage.DummyStorageStrategy;
 import com.stream.storage.StorageStrategy;
 
-import jakarta.transaction.Transactional;
-
-@Transactional
 @SpringBootTest
 public class UploadFacadeTest {
-	@Autowired
+	private VideoService videoService;
 	private VideoRepository videoRepository;
 	private UploadFacade uploadFacade;
 
-	@BeforeEach
-	private void setUploadFacade() {
-		VideoService videoService = new VideoServiceImpl(this.videoRepository);
+	@Autowired
+	public UploadFacadeTest(VideoService videoService, VideoRepository videoRepository) {
+		this.videoRepository = videoRepository;
+		this.videoService = videoService;
 		StorageStrategy storageStrategy = new DummyStorageStrategy();
-		this.uploadFacade = new UploadFacade(videoService, storageStrategy);
+		this.uploadFacade = new UploadFacade(this.videoService, storageStrategy);
+	}
+
+	@AfterEach
+	void cleanDB() {
+		videoRepository.deleteAll();
 	}
 
 	@Test

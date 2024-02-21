@@ -1,7 +1,7 @@
 package com.stream.facade;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,25 +11,27 @@ import org.springframework.core.io.Resource;
 import com.stream.domain.video.Video;
 import com.stream.domain.video.VideoRepository;
 import com.stream.domain.video.VideoService;
-import com.stream.domain.video.VideoServiceImpl;
+import com.stream.domain.video.exception.VideoNotFoundException;
 import com.stream.storage.DummyStorageStrategy;
 import com.stream.storage.StorageStrategy;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-
-@Transactional
 @SpringBootTest
 public class StreamingFacadeTest {
 	private StreamingFacade streamingFacade;
-	@Autowired
+	private VideoService videoService;
 	private VideoRepository videoRepository;
 
-	@BeforeEach
-	private void setStreamingFacade() {
-		VideoService videoService = new VideoServiceImpl(videoRepository);
+	@Autowired
+	public StreamingFacadeTest(VideoService videoService, VideoRepository videoRepository) {
+		this.videoRepository = videoRepository;
+		this.videoService = videoService;
 		StorageStrategy storageStrategy = new DummyStorageStrategy();
-		this.streamingFacade = new StreamingFacade(videoService, storageStrategy);
+		this.streamingFacade = new StreamingFacade(this.videoService, storageStrategy);
+	}
+
+	@AfterEach
+	void cleanDB() {
+		videoRepository.deleteAll();
 	}
 
 	@Test
@@ -44,12 +46,11 @@ public class StreamingFacadeTest {
 		// Given
 		long mockVideoId = 123;
 		Assertions.assertThatThrownBy(() -> {
-					// When
-					streamingFacade.createVideoStream(mockVideoId);
-				}
-			)
+				// When
+				streamingFacade.createVideoStream(mockVideoId);
+			})
 			// Then
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(VideoNotFoundException.class);
 	}
 
 	@Test

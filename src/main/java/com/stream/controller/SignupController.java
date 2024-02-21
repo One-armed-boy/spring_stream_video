@@ -30,7 +30,7 @@ public class SignupController {
 
 	@PostMapping(path = "/sign-up")
 	public ResponseEntity<SignupResponse> signup(@Valid @RequestBody final SignupRequest requestBody) {
-		SignupResult result = this.signupFacade.signUp(requestBody.toCommand());
+		SignupResult result = signupFacade.signUp(requestBody.toCommand());
 		return ResponseEntity.ok().body(new SignupResponse(result.getEmail(), result.getSignupDate()));
 	}
 
@@ -45,7 +45,7 @@ public class SignupController {
 		private String inputPassword;
 
 		public SignupCommand toCommand() {
-			return SignupCommand.builder().email(this.email).password(this.inputPassword).build();
+			return SignupCommand.builder().email(email).password(inputPassword).build();
 		}
 	}
 

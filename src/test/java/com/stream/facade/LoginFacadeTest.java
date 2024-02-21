@@ -57,19 +57,19 @@ public class LoginFacadeTest {
 		// given
 		String mockEmail = "abdef@test.com";
 		String inputPwd = "1q2w3e4r";
-		this.signupFacade.signUp(SignupCommand.builder().email(mockEmail).password(inputPwd).build());
+		signupFacade.signUp(SignupCommand.builder().email(mockEmail).password(inputPwd).build());
 
-		Member memberBeforeLogin = this.memberService.getMemberByEmail(mockEmail);
+		Member memberBeforeLogin = memberService.getMemberByEmail(mockEmail);
 		Assertions.assertThat(memberBeforeLogin.getLastLoginAt()).isNull();
 
 		LoginCommand command = LoginCommand.builder().email(mockEmail).inputPassword(inputPwd).build();
 
 		// when
 		Date beforeTest = new Date();
-		this.loginFacade.login(command);
+		loginFacade.login(command);
 
 		// then
-		Member member = this.memberService.getMemberByEmail(mockEmail);
+		Member member = memberService.getMemberByEmail(mockEmail);
 		Assertions.assertThat(member.getLastLoginAt()).isCloseTo(beforeTest, 5000);
 	}
 
@@ -79,7 +79,7 @@ public class LoginFacadeTest {
 		// given
 		String mockEmail = "abcdef@test.com";
 		String mockPwd = "1q2w3e4r";
-		this.signupFacade.signUp(SignupCommand.builder().email(mockEmail).password(mockPwd).build());
+		signupFacade.signUp(SignupCommand.builder().email(mockEmail).password(mockPwd).build());
 
 		String incorrectPwd = "abcdefg";
 
@@ -87,7 +87,7 @@ public class LoginFacadeTest {
 
 		Assertions.assertThatThrownBy(() -> {
 			// when
-			this.loginFacade.login(command);
+			loginFacade.login(command);
 			// then
 		}).isInstanceOf(IncorrectPasswordException.class);
 	}
@@ -102,7 +102,7 @@ public class LoginFacadeTest {
 
 		Assertions.assertThatThrownBy(() -> {
 			// when
-			this.loginFacade.login(command);
+			loginFacade.login(command);
 			// then
 		}).isInstanceOf(RuntimeException.class);
 	}

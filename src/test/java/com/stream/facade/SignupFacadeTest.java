@@ -59,14 +59,14 @@ public class SignupFacadeTest {
 		SignupCommand signupCommand = SignupCommand.builder().email(mockEmail).password(inputPwd).build();
 
 		// when
-		SignupResult result = this.signupFacade.signUp(signupCommand);
+		SignupResult result = signupFacade.signUp(signupCommand);
 
 		// then
 		Assertions.assertThat(result.getEmail()).isEqualTo(mockEmail);
 
-		Member member = this.memberService.getMemberByEmail(mockEmail);
+		Member member = memberService.getMemberByEmail(mockEmail);
 		Assertions.assertThat(member.getEmail()).isEqualTo(mockEmail);
-		Assertions.assertThat(this.passwordEncoder.matches(inputPwd, member.getPassword())).isTrue();
+		Assertions.assertThat(passwordEncoder.matches(inputPwd, member.getPassword())).isTrue();
 	}
 
 	@Test
@@ -75,11 +75,11 @@ public class SignupFacadeTest {
 		// given
 		String mockEmail = "abc@test.com";
 		String mockPwd = "abcdefg";
-		this.signupFacade.signUp(SignupCommand.builder().email(mockEmail).password(mockPwd).build());
+		signupFacade.signUp(SignupCommand.builder().email(mockEmail).password(mockPwd).build());
 
 		Assertions.assertThatThrownBy(() -> {
 			// when
-			this.signupFacade.signUp(SignupCommand.builder().email(mockEmail).password(mockPwd).build());
+			signupFacade.signUp(SignupCommand.builder().email(mockEmail).password(mockPwd).build());
 			// then
 		}).isInstanceOf(DuplicatedMemberCreateException.class);
 	}

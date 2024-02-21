@@ -14,12 +14,12 @@ import org.springframework.data.domain.Example;
 import com.stream.domain.video.dto.VideoDto;
 
 @SpringBootTest
-class VideoServiceImplTest {
+class VideoServiceTest {
 	private VideoService videoService;
 	private VideoRepository videoRepository;
 
 	@Autowired
-	public VideoServiceImplTest(VideoService videoService, VideoRepository videoRepository) {
+	public VideoServiceTest(VideoService videoService, VideoRepository videoRepository) {
 		this.videoService = videoService;
 		this.videoRepository = videoRepository;
 	}
@@ -32,7 +32,7 @@ class VideoServiceImplTest {
 	@Test
 	@DisplayName("정상적으로 DI가 이루어지는지 테스트")
 	void testDi() {
-		Assertions.assertThat(videoService).isInstanceOf(VideoServiceImpl.class);
+		Assertions.assertThat(videoService).isInstanceOf(VideoService.class);
 	}
 
 	@Test
