@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stream.domain.member.dto.login.LoginCommand;
+import com.stream.domain.member.dto.login.LoginResult;
 import com.stream.facade.LoginFacade;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -25,9 +27,9 @@ public class LoginController {
 	}
 
 	@PostMapping(path = "/login")
-	public ResponseEntity login(@Valid @RequestBody final LoginRequest request) {
-		this.loginFacade.login(request.toCommand());
-		return ResponseEntity.ok().build();
+	public ResponseEntity<LoginResponse> login(@Valid @RequestBody final LoginRequest request) {
+		LoginResult result = this.loginFacade.login(request.toCommand());
+		return ResponseEntity.ok().body(new LoginResponse(result.getAccessToken()));
 	}
 
 	@Builder
@@ -43,5 +45,11 @@ public class LoginController {
 		public LoginCommand toCommand() {
 			return LoginCommand.builder().email(this.email).inputPassword(this.inputPassword).build();
 		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class LoginResponse {
+		private String accessToken;
 	}
 }

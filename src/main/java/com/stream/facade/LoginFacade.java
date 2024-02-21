@@ -10,21 +10,26 @@ import org.springframework.transaction.annotation.Transactional;
 import com.stream.domain.member.Member;
 import com.stream.domain.member.MemberService;
 import com.stream.domain.member.dto.login.LoginCommand;
+import com.stream.domain.member.dto.login.LoginResult;
 import com.stream.domain.member.exception.IncorrectPasswordException;
+import com.stream.security.jwt.DecodedJwtAccessToken;
+import com.stream.security.jwt.JwtManager;
 
 @Service
 public class LoginFacade {
 	private MemberService memberService;
 	private PasswordEncoder passwordEncoder;
+	private JwtManager jwtManager;
 
 	@Autowired
-	public LoginFacade(MemberService memberService, PasswordEncoder passwordEncoder) {
+	public LoginFacade(MemberService memberService, PasswordEncoder passwordEncoder, JwtManager jwtManager) {
 		this.memberService = memberService;
 		this.passwordEncoder = passwordEncoder;
+		this.jwtManager = jwtManager;
 	}
 
 	@Transactional
-	public void login(LoginCommand command) {
+	public LoginResult login(LoginCommand command) {
 		String email = command.getEmail();
 		String inputPassword = command.getInputPassword();
 
@@ -34,5 +39,7 @@ public class LoginFacade {
 			throw new IncorrectPasswordException();
 		}
 		member.login(new Date());
+		return new LoginResult(
+			jwtManager.issueToken(new DecodedJwtAccessToken(member.getEmail(), member.getRole())));
 	}
 }
