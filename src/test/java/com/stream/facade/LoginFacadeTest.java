@@ -3,28 +3,52 @@ package com.stream.facade;
 import java.util.Date;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.stream.domain.member.Member;
+import com.stream.domain.member.MemberRepository;
 import com.stream.domain.member.MemberService;
 import com.stream.domain.member.dto.login.LoginCommand;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.member.exception.IncorrectPasswordException;
+import com.stream.domain.role.Role;
+import com.stream.domain.role.RoleRepository;
+import com.stream.domain.role.RolesEnum;
 
 @SpringBootTest
 public class LoginFacadeTest {
 	private LoginFacade loginFacade;
 	private SignupFacade signupFacade;
 	private MemberService memberService;
+	private MemberRepository memberRepository;
+	private RoleRepository roleRepository;
 
 	@Autowired
-	public LoginFacadeTest(LoginFacade loginFacade, SignupFacade signupFacade, MemberService memberService) {
+	public LoginFacadeTest(LoginFacade loginFacade, SignupFacade signupFacade, MemberService memberService,
+		MemberRepository memberRepository, RoleRepository roleRepository) {
 		this.loginFacade = loginFacade;
 		this.signupFacade = signupFacade;
 		this.memberService = memberService;
+		this.memberRepository = memberRepository;
+		this.roleRepository = roleRepository;
+	}
+
+	@BeforeEach
+	void initRole() {
+		roleRepository.save(new Role(RolesEnum.USER));
+		roleRepository.save(new Role(RolesEnum.UPLOADER));
+		roleRepository.save(new Role(RolesEnum.ADMIN));
+	}
+
+	@AfterEach
+	void cleanDB() {
+		memberRepository.deleteAll();
+		roleRepository.deleteAll();
 	}
 
 	@Test

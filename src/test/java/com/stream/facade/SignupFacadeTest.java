@@ -2,6 +2,7 @@ package com.stream.facade;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,26 +15,39 @@ import com.stream.domain.member.MemberService;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.member.dto.signup.SignupResult;
 import com.stream.domain.member.exception.DuplicatedMemberCreateException;
+import com.stream.domain.role.Role;
+import com.stream.domain.role.RoleRepository;
+import com.stream.domain.role.RolesEnum;
 
 @SpringBootTest
 public class SignupFacadeTest {
 	private SignupFacade signupFacade;
 	private MemberService memberService;
 	private MemberRepository memberRepository;
+	private RoleRepository roleRepository;
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	public SignupFacadeTest(SignupFacade signupFacade, MemberService memberService, MemberRepository memberRepository,
-		PasswordEncoder passwordEncoder) {
+		RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
 		this.signupFacade = signupFacade;
 		this.memberService = memberService;
 		this.memberRepository = memberRepository;
+		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
+	}
+
+	@BeforeEach
+	void initRole() {
+		roleRepository.save(new Role(RolesEnum.USER));
+		roleRepository.save(new Role(RolesEnum.UPLOADER));
+		roleRepository.save(new Role(RolesEnum.ADMIN));
 	}
 
 	@AfterEach
 	void cleanDB() {
-		this.memberRepository.deleteAll();
+		memberRepository.deleteAll();
+		roleRepository.deleteAll();
 	}
 
 	@Test
