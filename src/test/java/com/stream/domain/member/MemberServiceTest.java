@@ -4,33 +4,52 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.stream.domain.member.dto.CreateCommand;
+import com.stream.domain.member.dto.CreateMemberCommand;
 import com.stream.domain.member.exception.DuplicatedMemberCreateException;
 import com.stream.domain.member.exception.MemberNotFoundException;
+import com.stream.domain.role.Role;
+import com.stream.domain.role.RoleRepository;
+import com.stream.domain.role.RoleService;
+import com.stream.domain.role.RolesEnum;
+import com.stream.domain.role.dto.CreateRoleCommand;
 
 @SpringBootTest
 public class MemberServiceTest {
 	private MemberService memberService;
 	private MemberRepository memberRepository;
+	private RoleService roleService;
+	private RoleRepository roleRepository;
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	public MemberServiceTest(MemberService memberService, MemberRepository memberRepository, RoleService roleService,
+		RoleRepository roleRepository,
+		PasswordEncoder passwordEncoder) {
+		this.memberService = memberService;
+		this.memberRepository = memberRepository;
+		this.roleService = roleService;
+		this.roleRepository = roleRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+
+	@BeforeEach
+	void initRole() {
+		roleService.create(new CreateRoleCommand(RolesEnum.USER));
+		roleService.create(new CreateRoleCommand(RolesEnum.UPLOADER));
+		roleService.create(new CreateRoleCommand(RolesEnum.ADMIN));
+	}
 
 	@AfterEach
 	void cleanDB() {
 		this.memberRepository.deleteAll();
-	}
-
-	@Autowired
-	public MemberServiceTest(MemberService memberService, MemberRepository memberRepository,
-		PasswordEncoder passwordEncoder) {
-		this.memberService = memberService;
-		this.memberRepository = memberRepository;
-		this.passwordEncoder = passwordEncoder;
+		this.roleRepository.deleteAll();
 	}
 
 	@Test
@@ -39,9 +58,11 @@ public class MemberServiceTest {
 		// given
 		String mockEmail = "test@test.com";
 		String mockPwd = passwordEncoder.encode("abcdefgh");
-		CreateCommand createCommand = CreateCommand.builder()
+		Role role = roleService.getRoleByName(RolesEnum.USER);
+		CreateMemberCommand createCommand = CreateMemberCommand.builder()
 			.email(mockEmail)
 			.encryptedPassword(mockPwd)
+			.role(role)
 			.build();
 
 		// when
@@ -62,10 +83,12 @@ public class MemberServiceTest {
 		// given
 		String mockEmail = "abc@test.com";
 		String mockPwd = this.passwordEncoder.encode("abcdefg");
-		this.memberService.create(CreateCommand.builder().email(mockEmail).encryptedPassword(mockPwd).build());
-		CreateCommand commandForCreateDuplicatedEmail = CreateCommand.builder()
+		Role role = roleService.getRoleByName(RolesEnum.USER);
+		this.memberService.create(CreateMemberCommand.builder().email(mockEmail).encryptedPassword(mockPwd).build());
+		CreateMemberCommand commandForCreateDuplicatedEmail = CreateMemberCommand.builder()
 			.email(mockEmail)
 			.encryptedPassword(mockPwd)
+			.role(role)
 			.build();
 
 		Assertions.assertThatThrownBy(() -> {
@@ -81,12 +104,18 @@ public class MemberServiceTest {
 		// given
 		String mockEmailInDB = "abc@test.com";
 		String mockPwd = this.passwordEncoder.encode("abcdefg");
-		this.memberService.create(CreateCommand.builder().email(mockEmailInDB).encryptedPassword(mockPwd).build());
+		Role role = roleService.getRoleByName(RolesEnum.USER);
+		this.memberService.create(
+			CreateMemberCommand.builder().email(mockEmailInDB).encryptedPassword(mockPwd).role(role).build());
 		List<Member> membersBeforeTest = this.memberRepository.findAll();
 		Assertions.assertThat(membersBeforeTest.size()).isEqualTo(1);
 
 		String mockEmailNotInDB = "def@test.com";
-		CreateCommand command = CreateCommand.builder().email(mockEmailNotInDB).encryptedPassword(mockPwd).build();
+		CreateMemberCommand command = CreateMemberCommand.builder()
+			.email(mockEmailNotInDB)
+			.encryptedPassword(mockPwd)
+			.role(role)
+			.build();
 
 		// when
 		this.memberService.create(command);
@@ -102,7 +131,9 @@ public class MemberServiceTest {
 		// given
 		String mockEmailInDB = "abc@test.com";
 		String mockPwd = this.passwordEncoder.encode("abcdefg");
-		this.memberService.create(CreateCommand.builder().email(mockEmailInDB).encryptedPassword(mockPwd).build());
+		Role role = roleService.getRoleByName(RolesEnum.USER);
+		this.memberService.create(
+			CreateMemberCommand.builder().email(mockEmailInDB).encryptedPassword(mockPwd).role(role).build());
 
 		String mockEmailForSearch = "def@test.com";
 
@@ -119,8 +150,9 @@ public class MemberServiceTest {
 		// given
 		String mockEmail = "abc@test.com";
 		String mockPwd = this.passwordEncoder.encode("abcdefg");
+		Role role = roleService.getRoleByName(RolesEnum.USER);
 		Member memberToSave = this.memberService.create(
-			CreateCommand.builder().email(mockEmail).encryptedPassword(mockPwd).build());
+			CreateMemberCommand.builder().email(mockEmail).encryptedPassword(mockPwd).role(role).build());
 
 		// when
 		Member memberInDB = this.memberService.getMemberByEmail(mockEmail);

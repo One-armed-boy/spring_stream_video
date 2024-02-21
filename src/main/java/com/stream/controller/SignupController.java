@@ -28,7 +28,7 @@ public class SignupController {
 		this.signupFacade = signupFacade;
 	}
 
-	@PostMapping(path = "/members/sign-up")
+	@PostMapping(path = "/sign-up")
 	public ResponseEntity<SignupResponse> signup(@Valid @RequestBody final SignupRequest requestBody) {
 		SignupResult result = this.signupFacade.signUp(requestBody.toCommand());
 		return ResponseEntity.ok().body(new SignupResponse(result.getEmail(), result.getSignupDate()));

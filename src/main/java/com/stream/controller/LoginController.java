@@ -24,7 +24,7 @@ public class LoginController {
 		this.loginFacade = loginFacade;
 	}
 
-	@PostMapping(path = "/members/login")
+	@PostMapping(path = "/login")
 	public ResponseEntity login(@Valid @RequestBody final LoginRequest request) {
 		this.loginFacade.login(request.toCommand());
 		return ResponseEntity.ok().build();

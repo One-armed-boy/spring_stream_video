@@ -4,11 +4,14 @@ import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.stream.domain.role.Role;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -17,7 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "member")
+@Table(name = "members")
 @NoArgsConstructor
 @Getter
 public class Member {
@@ -32,6 +35,9 @@ public class Member {
 	@Column(name = "password", nullable = false)
 	private String password;
 
+	@ManyToOne
+	private Role role;
+
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false, updatable = false)
@@ -42,10 +48,11 @@ public class Member {
 	private Date lastLoginAt;
 
 	@Builder
-	public Member(long id, String email, String password) {
+	public Member(long id, String email, String password, Role role) {
 		this.id = id;
 		this.email = email;
 		this.password = password;
+		this.role = role;
 	}
 
 	public void login(Date loginAt) {

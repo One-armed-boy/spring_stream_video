@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.stream.domain.member.dto.CreateCommand;
+import com.stream.domain.member.dto.CreateMemberCommand;
 import com.stream.domain.member.exception.DuplicatedMemberCreateException;
 import com.stream.domain.member.exception.MemberNotFoundException;
+import com.stream.domain.role.Role;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,15 +25,16 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Member create(CreateCommand command) {
+	public Member create(CreateMemberCommand command) {
 		String email = command.getEmail();
 		if (this.isMemberExistByEmail(email)) {
 			throw new DuplicatedMemberCreateException();
 		}
 
 		String password = command.getEncryptedPassword();
+		Role role = command.getRole();
 		return this.memberRepository.save(
-			Member.builder().email(email).password(password).build());
+			Member.builder().email(email).password(password).role(role).build());
 	}
 
 	private boolean isMemberExistByEmail(String email) {
