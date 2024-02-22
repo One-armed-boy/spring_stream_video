@@ -10,8 +10,20 @@ spring:
     hibernate:
       ddl-auto: create
 
+logging:
+  level:
+    ROOT: INFO
+    org.hibernate: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.orm: TRACE
+    org.springframework.transaction: TRACE
+    com.mysql.cj.jdbc: TRACE
+
 my:
   app:
     storage:
       type: local
       localStorageDir: ./videos
+    jwt:
+      signingKey: sdnkavnrkwnaldfjndxlsjfjndskjv
+

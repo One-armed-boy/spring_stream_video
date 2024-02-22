@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,21 +13,26 @@ import org.springframework.data.domain.Example;
 
 import com.stream.domain.video.dto.VideoDto;
 
-import jakarta.transaction.Transactional;
-
-@Transactional
 @SpringBootTest
-class VideoServiceImplTest {
-	@Autowired
+class VideoServiceTest {
 	private VideoService videoService;
+	private VideoRepository videoRepository;
 
 	@Autowired
-	private VideoRepository videoRepository;
+	public VideoServiceTest(VideoService videoService, VideoRepository videoRepository) {
+		this.videoService = videoService;
+		this.videoRepository = videoRepository;
+	}
+
+	@AfterEach
+	void cleanDB() {
+		videoRepository.deleteAll();
+	}
 
 	@Test
 	@DisplayName("정상적으로 DI가 이루어지는지 테스트")
 	void testDi() {
-		Assertions.assertThat(videoService).isInstanceOf(VideoServiceImpl.class);
+		Assertions.assertThat(videoService).isInstanceOf(VideoService.class);
 	}
 
 	@Test

@@ -1,15 +1,17 @@
-package com.stream.domain.video;
+package com.stream.domain.member;
 
 import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import com.stream.domain.role.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -18,47 +20,42 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "videos")
+@Table(name = "members")
 @NoArgsConstructor
 @Getter
-public class Video {
+public class Member {
 	@Id
 	@Column(name = "id", nullable = false, updatable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@Column(name = "file_tag", nullable = false)
-	private String fileTag;
+	@Column(name = "email", nullable = false, unique = true)
+	private String email;
 
-	@Column(name = "extension", nullable = false)
-	private String extension;
+	@Column(name = "password", nullable = false)
+	private String password;
 
-	@Column(name = "path", nullable = false)
-	private String path;
-
-	@Column(name = "size", nullable = false)
-	private long size;
-
-	@Column(name = "description")
-	private String description;
+	@ManyToOne
+	private Role role;
 
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Date createdAt;
 
-	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updated_at", nullable = false)
-	private Date updatedAt;
+	@Column(name = "last_login_at")
+	private Date lastLoginAt;
 
 	@Builder
-	public Video(long id, String fileTag, String extension, String path, long size, String description) {
+	public Member(long id, String email, String password, Role role) {
 		this.id = id;
-		this.fileTag = fileTag;
-		this.extension = extension;
-		this.path = path;
-		this.size = size;
-		this.description = description;
+		this.email = email;
+		this.password = password;
+		this.role = role;
+	}
+
+	public void login(Date loginAt) {
+		lastLoginAt = loginAt;
 	}
 }

@@ -1,6 +1,6 @@
 package com.stream.domain.video.dto;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import com.stream.domain.video.Video;
 
@@ -20,7 +20,7 @@ public class VideoDto {
 	private String extension;
 	private long size;
 	private String description;
-	private LocalDateTime createdAt;
+	private Date createdAt;
 
 	public static VideoDto convertDomainToDto(Video video) {
 		return VideoDto.builder()
