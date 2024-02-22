@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "video")
+@Table(name = "videos")
 @NoArgsConstructor
 @Getter
 public class Video {
