@@ -28,6 +28,8 @@ my:
     storage:
       type: local
       localStorageDir: ./videos
+    jwt:
+      signingKey: { JWT 사이닝을 위한 랜덤 문자열 }
 
 ```
 
