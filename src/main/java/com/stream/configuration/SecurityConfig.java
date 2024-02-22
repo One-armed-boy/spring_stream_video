@@ -1,16 +1,26 @@
 package com.stream.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import com.stream.domain.role.RolesEnum;
+import com.stream.security.jwt.JwtAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+	@Autowired
+	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+	}
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -21,6 +31,7 @@ public class SecurityConfig {
 		// JWT 인증이기 때문에 csrf 토큰 인증은 의미 중복
 		http.csrf(csrf -> csrf.disable())
 			.httpBasic(c -> c.disable())
+			.addFilterAfter(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
 			.authorizeHttpRequests(c -> {
 				c.requestMatchers("/login", "/sign-up").permitAll()
 					.anyRequest()
