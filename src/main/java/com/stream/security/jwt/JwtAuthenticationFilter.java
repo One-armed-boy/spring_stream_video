@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+		// TODO: 액세스 토큰을 쿠키에서 추출하도록 수정
 		DecodedJwtAccessToken decodedToken = jwtManager.decodeToken(request.getHeader("Authorization"));
 
 		String email = decodedToken.getEmail();
