@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Member {
 	@Id
 	@Column(name = "id", nullable = false, updatable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Column(name = "email", nullable = false, unique = true)

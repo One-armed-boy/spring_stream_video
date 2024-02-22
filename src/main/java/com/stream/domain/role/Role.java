@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Role {
 	@Id
 	@Column(name = "id", nullable = false, updatable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	@Enumerated(EnumType.STRING)

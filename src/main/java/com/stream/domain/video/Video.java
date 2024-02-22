@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class Video {
 	@Id
 	@Column(name = "id", nullable = false, updatable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Column(name = "file_tag", nullable = false)
