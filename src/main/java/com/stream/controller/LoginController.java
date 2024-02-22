@@ -29,7 +29,8 @@ public class LoginController {
 	@PostMapping(path = "/login")
 	public ResponseEntity<LoginResponse> login(@Valid @RequestBody final LoginRequest request) {
 		LoginResult result = loginFacade.login(request.toCommand());
-		return ResponseEntity.ok().body(new LoginResponse(result.getAccessToken()));
+		String accessToken = result.getAccessToken();
+		return ResponseEntity.ok().header("Authorization", accessToken).body(new LoginResponse(accessToken));
 	}
 
 	@Builder
