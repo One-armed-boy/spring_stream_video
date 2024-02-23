@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.stream.security.jwt.exception.AccessTokenNotFoundException;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -55,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		Cookie accessTokenCookie = Arrays.stream(cookies)
 			.filter(cookie -> cookie.getName().equals(JwtMetadata.ACCESS_TOKEN_KEY))
 			.findFirst()
-			.orElseThrow();
+			.orElseThrow(AccessTokenNotFoundException::new);
 		return accessTokenCookie.getValue();
 	}
 
