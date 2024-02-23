@@ -12,6 +12,9 @@ import com.stream.domain.video.dto.UploadVideoDto;
 import com.stream.domain.video.exception.EmptyFileUploadException;
 import com.stream.storage.StorageStrategy;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class UploadFacade {
 	private final VideoService videoService;
@@ -33,10 +36,9 @@ public class UploadFacade {
 			execPostSave(videoMetadata, savingPath, videoForUpload.getSize());
 		} catch (Exception err) {
 			// TODO: 로거 도입
-			System.out.println(err);
-		} finally {
-			return CompletableFuture.completedFuture(null);
+			log.error(err.getMessage(), err.fillInStackTrace());
 		}
+		return CompletableFuture.completedFuture(null);
 	}
 
 	private void execPostSave(UploadVideoDto videoMetadata, String targetPath, long fileSize) {
