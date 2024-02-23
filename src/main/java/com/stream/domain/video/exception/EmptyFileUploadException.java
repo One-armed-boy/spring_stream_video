@@ -1,7 +1,10 @@
 package com.stream.domain.video.exception;
 
-public class EmptyFileUploadException extends RuntimeException {
+import com.stream.exception.BaseException;
+import com.stream.exception.code.VideoExceptionCode;
+
+public class EmptyFileUploadException extends BaseException {
 	public EmptyFileUploadException() {
-		super("video file in upload request maybe empty");
+		super(VideoExceptionCode.UPLOAD_EMPTY_FILE, "video file in upload request maybe empty");
 	}
 }

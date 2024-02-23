@@ -1,7 +1,10 @@
 package com.stream.domain.member.exception;
 
-public class MemberNotFoundException extends RuntimeException {
+import com.stream.exception.BaseException;
+import com.stream.exception.code.MemberExceptionCode;
+
+public class MemberNotFoundException extends BaseException {
 	public MemberNotFoundException(String email) {
-		super("Can't find member in DB (key: email, value: " + email + " )");
+		super(MemberExceptionCode.MEMBER_NOT_FOUND, "Can't find member in DB (key: email, value: " + email + " )");
 	}
 }
