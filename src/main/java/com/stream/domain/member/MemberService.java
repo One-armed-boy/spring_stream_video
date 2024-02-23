@@ -12,7 +12,7 @@ import com.stream.domain.role.Role;
 @Service
 @Transactional(readOnly = true)
 public class MemberService {
-	private MemberRepository memberRepository;
+	private final MemberRepository memberRepository;
 
 	@Autowired
 	public MemberService(MemberRepository memberRepository) {

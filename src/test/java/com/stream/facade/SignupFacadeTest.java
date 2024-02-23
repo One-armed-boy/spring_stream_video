@@ -21,11 +21,11 @@ import com.stream.domain.role.RolesEnum;
 
 @SpringBootTest
 public class SignupFacadeTest {
-	private SignupFacade signupFacade;
-	private MemberService memberService;
-	private MemberRepository memberRepository;
-	private RoleRepository roleRepository;
-	private PasswordEncoder passwordEncoder;
+	private final SignupFacade signupFacade;
+	private final MemberService memberService;
+	private final MemberRepository memberRepository;
+	private final RoleRepository roleRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Autowired
 	public SignupFacadeTest(SignupFacade signupFacade, MemberService memberService, MemberRepository memberRepository,

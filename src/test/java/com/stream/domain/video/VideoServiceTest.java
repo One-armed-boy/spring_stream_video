@@ -15,8 +15,8 @@ import com.stream.domain.video.dto.VideoDto;
 
 @SpringBootTest
 class VideoServiceTest {
-	private VideoService videoService;
-	private VideoRepository videoRepository;
+	private final VideoService videoService;
+	private final VideoRepository videoRepository;
 
 	@Autowired
 	public VideoServiceTest(VideoService videoService, VideoRepository videoRepository) {

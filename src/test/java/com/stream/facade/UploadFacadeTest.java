@@ -20,16 +20,14 @@ import com.stream.storage.StorageStrategy;
 
 @SpringBootTest
 public class UploadFacadeTest {
-	private VideoService videoService;
-	private VideoRepository videoRepository;
-	private UploadFacade uploadFacade;
+	private final VideoRepository videoRepository;
+	private final UploadFacade uploadFacade;
 
 	@Autowired
-	public UploadFacadeTest(VideoService videoService, VideoRepository videoRepository) {
+	public UploadFacadeTest(VideoRepository videoRepository, VideoService videoService) {
 		this.videoRepository = videoRepository;
-		this.videoService = videoService;
 		StorageStrategy storageStrategy = new DummyStorageStrategy();
-		this.uploadFacade = new UploadFacade(this.videoService, storageStrategy);
+		this.uploadFacade = new UploadFacade(videoService, storageStrategy);
 	}
 
 	@AfterEach

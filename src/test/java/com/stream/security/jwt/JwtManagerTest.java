@@ -11,7 +11,7 @@ import com.stream.domain.role.RolesEnum;
 
 @SpringBootTest
 public class JwtManagerTest {
-	private JwtManager jwtManager;
+	private final JwtManager jwtManager;
 
 	@Autowired
 	public JwtManagerTest(JwtManager jwtManager) {

@@ -15,9 +15,9 @@ import com.stream.domain.role.RolesEnum;
 
 @Service
 public class SignupFacade {
-	private MemberService memberService;
-	private RoleService roleService;
-	private PasswordEncoder passwordEncoder;
+	private final MemberService memberService;
+	private final RoleService roleService;
+	private final PasswordEncoder passwordEncoder;
 
 	@Autowired
 	public SignupFacade(MemberService memberService, RoleService roleService, PasswordEncoder passwordEncoder) {

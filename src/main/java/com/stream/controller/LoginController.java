@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 public class LoginController {
-	private LoginFacade loginFacade;
+	private final LoginFacade loginFacade;
 
 	@Autowired
 	public LoginController(LoginFacade loginFacade) {

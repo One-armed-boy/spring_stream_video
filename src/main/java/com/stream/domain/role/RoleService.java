@@ -10,7 +10,7 @@ import com.stream.domain.role.exception.RoleNotFoundException;
 @Service
 @Transactional(readOnly = true)
 public class RoleService {
-	private RoleRepository roleRepository;
+	private final RoleRepository roleRepository;
 
 	@Autowired
 	public RoleService(RoleRepository roleRepository) {
