@@ -18,7 +18,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtManager jwtManager;
@@ -41,6 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			List.of(authority));
 
 		SecurityContextHolder.getContext().setAuthentication(auth);
+
+		logger.debug(
+			"Jwt Auth Success (path: " + request.getServletPath() + ", email: " + email + ", role: " + roleName + " )");
 
 		filterChain.doFilter(request, response);
 	}

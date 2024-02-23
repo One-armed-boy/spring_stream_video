@@ -21,7 +21,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 public class LoginController {
 	private LoginFacade loginFacade;
@@ -34,6 +36,9 @@ public class LoginController {
 	@PostMapping(path = "/login")
 	public ResponseEntity<LoginResponse> login(@Valid @RequestBody final LoginRequest request) {
 		LoginResult result = loginFacade.login(request.toCommand());
+
+		log.debug("Login Success! (email: " + request.getEmail() + " )");
+
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, createCookie(result).toString())
 			.body(new LoginResponse(result.getAccessToken()));

@@ -18,7 +18,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 public class SignupController {
 	private SignupFacade signupFacade;
@@ -31,6 +33,9 @@ public class SignupController {
 	@PostMapping(path = "/sign-up")
 	public ResponseEntity<SignupResponse> signup(@Valid @RequestBody final SignupRequest requestBody) {
 		SignupResult result = signupFacade.signUp(requestBody.toCommand());
+
+		log.debug("Sign up Success! (email: " + result.getEmail() + " )");
+
 		return ResponseEntity.ok().body(new SignupResponse(result.getEmail(), result.getSignupDate()));
 	}
 
