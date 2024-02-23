@@ -14,6 +14,7 @@ import com.stream.domain.member.dto.login.LoginResult;
 import com.stream.domain.member.exception.IncorrectPasswordException;
 import com.stream.security.jwt.DecodedJwtAccessToken;
 import com.stream.security.jwt.JwtManager;
+import com.stream.security.jwt.JwtMetadata;
 
 @Service
 public class LoginFacade {
@@ -40,6 +41,7 @@ public class LoginFacade {
 		}
 		member.login(new Date());
 		return new LoginResult(
-			jwtManager.issueToken(new DecodedJwtAccessToken(member.getEmail(), member.getRole())));
+			jwtManager.issueToken(new DecodedJwtAccessToken(member.getEmail(), member.getRole())),
+			JwtMetadata.ACCESS_TOKEN_EXPIRE_MS);
 	}
 }

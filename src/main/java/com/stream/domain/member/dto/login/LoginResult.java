@@ -7,4 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class LoginResult {
 	private String accessToken;
+	private int accessTokenExpireMs;
 }

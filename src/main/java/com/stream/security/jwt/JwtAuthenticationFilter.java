@@ -1,6 +1,7 @@
 package com.stream.security.jwt;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -29,8 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		// TODO: 액세스 토큰을 쿠키에서 추출하도록 수정
-		DecodedJwtAccessToken decodedToken = jwtManager.decodeToken(request.getHeader("Authorization"));
+		DecodedJwtAccessToken decodedToken = jwtManager.decodeToken(extractAccessToken(request));
 
 		String email = decodedToken.getEmail();
 		String roleName = decodedToken.getRole().getName().name();
@@ -42,6 +43,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		SecurityContextHolder.getContext().setAuthentication(auth);
 
 		filterChain.doFilter(request, response);
+	}
+
+	private String extractAccessToken(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		Cookie accessTokenCookie = Arrays.stream(cookies)
+			.filter(cookie -> cookie.getName().equals(JwtMetadata.ACCESS_TOKEN_KEY))
+			.findFirst()
+			.orElseThrow();
+		return accessTokenCookie.getValue();
 	}
 
 	@Override
