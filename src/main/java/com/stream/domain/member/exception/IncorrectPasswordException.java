@@ -1,7 +1,10 @@
 package com.stream.domain.member.exception;
 
-public class IncorrectPasswordException extends RuntimeException {
+import com.stream.exception.BaseException;
+import com.stream.exception.code.MemberExceptionCode;
+
+public class IncorrectPasswordException extends BaseException {
 	public IncorrectPasswordException() {
-		super("Input password is not corrected.");
+		super(MemberExceptionCode.INVALID_AUTH_REQUEST);
 	}
 }

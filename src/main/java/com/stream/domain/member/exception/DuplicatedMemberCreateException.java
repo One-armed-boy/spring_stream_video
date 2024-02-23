@@ -1,7 +1,10 @@
 package com.stream.domain.member.exception;
 
-public class DuplicatedMemberCreateException extends RuntimeException {
+import com.stream.exception.BaseException;
+import com.stream.exception.code.MemberExceptionCode;
+
+public class DuplicatedMemberCreateException extends BaseException {
 	public DuplicatedMemberCreateException() {
-		super("Exception be cause of request to create duplicated member");
+		super(MemberExceptionCode.DUPLICATED_MEMBER);
 	}
 }

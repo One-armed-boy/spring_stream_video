@@ -21,15 +21,12 @@ public class StreamingController {
 
 	@GetMapping(path = "/videos/stream", params = "id")
 	public ResponseEntity<Resource> getVideoStream(@RequestParam long id) {
-		try {
-			Resource videoStream = streamingFacade.createVideoStream(id);
+		Resource videoStream = streamingFacade.createVideoStream(id);
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("Content-Type", "video/mp4");
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "video/mp4");
 
-			return ResponseEntity.ok().headers(headers).body(videoStream);
-		} catch (Exception err) {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.ok().headers(headers).body(videoStream);
+
 	}
 }
