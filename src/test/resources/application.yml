@@ -13,6 +13,7 @@ spring:
 logging:
   level:
     ROOT: INFO
+    com.stream: DEBUG
     org.hibernate: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.orm: TRACE
