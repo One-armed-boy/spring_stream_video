@@ -13,7 +13,6 @@ import com.stream.domain.role.RolesEnum;
 
 @Component
 public class JwtManager {
-	private static final int ACCESS_TOKEN_EXPIRE_MS = 5 * 60 * 1000;
 	@Value("${my.app.jwt.signingKey}")
 	private String signingKey;
 
@@ -21,7 +20,7 @@ public class JwtManager {
 		var email = decodedToken.getEmail();
 		var role = decodedToken.getRole();
 		return JWT.create()
-			.withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_MS))
+			.withExpiresAt(new Date(System.currentTimeMillis() + JwtMetadata.ACCESS_TOKEN_EXPIRE_MS))
 			.withClaim("email", email)
 			.withClaim("role", role.getName().name())
 			.sign(getAlgorithm());
