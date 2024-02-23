@@ -18,9 +18,9 @@ import com.stream.security.jwt.JwtMetadata;
 
 @Service
 public class LoginFacade {
-	private MemberService memberService;
-	private PasswordEncoder passwordEncoder;
-	private JwtManager jwtManager;
+	private final MemberService memberService;
+	private final PasswordEncoder passwordEncoder;
+	private final JwtManager jwtManager;
 
 	@Autowired
 	public LoginFacade(MemberService memberService, PasswordEncoder passwordEncoder, JwtManager jwtManager) {

@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		SecurityContextHolder.getContext().setAuthentication(auth);
 
 		logger.debug(
-			"Jwt Auth Success (path: " + request.getServletPath() + ", email: " + email + ", role: " + roleName + " )");
+			"Jwt Auth Success (path: " + request.getServletPath() + " token: " + decodedToken + " )");
 
 		filterChain.doFilter(request, response);
 	}

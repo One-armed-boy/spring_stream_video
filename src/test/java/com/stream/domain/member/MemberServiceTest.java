@@ -22,11 +22,11 @@ import com.stream.domain.role.dto.CreateRoleCommand;
 
 @SpringBootTest
 public class MemberServiceTest {
-	private MemberService memberService;
-	private MemberRepository memberRepository;
-	private RoleService roleService;
-	private RoleRepository roleRepository;
-	private PasswordEncoder passwordEncoder;
+	private final MemberService memberService;
+	private final MemberRepository memberRepository;
+	private final RoleService roleService;
+	private final RoleRepository roleRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Autowired
 	public MemberServiceTest(MemberService memberService, MemberRepository memberRepository, RoleService roleService,

@@ -17,16 +17,14 @@ import com.stream.storage.StorageStrategy;
 
 @SpringBootTest
 public class StreamingFacadeTest {
-	private StreamingFacade streamingFacade;
-	private VideoService videoService;
-	private VideoRepository videoRepository;
+	private final StreamingFacade streamingFacade;
+	private final VideoRepository videoRepository;
 
 	@Autowired
-	public StreamingFacadeTest(VideoService videoService, VideoRepository videoRepository) {
+	public StreamingFacadeTest(VideoRepository videoRepository, VideoService videoService) {
 		this.videoRepository = videoRepository;
-		this.videoService = videoService;
 		StorageStrategy storageStrategy = new DummyStorageStrategy();
-		this.streamingFacade = new StreamingFacade(this.videoService, storageStrategy);
+		this.streamingFacade = new StreamingFacade(videoService, storageStrategy);
 	}
 
 	@AfterEach

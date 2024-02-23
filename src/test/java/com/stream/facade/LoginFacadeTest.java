@@ -24,11 +24,11 @@ import com.stream.security.jwt.JwtMetadata;
 
 @SpringBootTest
 public class LoginFacadeTest {
-	private LoginFacade loginFacade;
-	private SignupFacade signupFacade;
-	private MemberService memberService;
-	private MemberRepository memberRepository;
-	private RoleRepository roleRepository;
+	private final LoginFacade loginFacade;
+	private final SignupFacade signupFacade;
+	private final MemberService memberService;
+	private final MemberRepository memberRepository;
+	private final RoleRepository roleRepository;
 
 	@Autowired
 	public LoginFacadeTest(LoginFacade loginFacade, SignupFacade signupFacade, MemberService memberService,

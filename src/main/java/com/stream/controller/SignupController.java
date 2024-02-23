@@ -15,15 +15,15 @@ import com.stream.facade.SignupFacade;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 public class SignupController {
-	private SignupFacade signupFacade;
+	private final SignupFacade signupFacade;
 
 	@Autowired
 	public SignupController(SignupFacade signupFacade) {
@@ -39,8 +39,8 @@ public class SignupController {
 		return ResponseEntity.ok().body(new SignupResponse(result.getEmail(), result.getSignupDate()));
 	}
 
-	@Builder
 	@Getter
+	@ToString
 	public static class SignupRequest {
 		@NotNull(message = "이메일을 입력해주세요.")
 		@Email(message = "유효한 이메일을 입력해주세요.")
@@ -49,15 +49,25 @@ public class SignupController {
 		@NotNull(message = "비밀번호를 입력해주세요.")
 		private String inputPassword;
 
+		@Builder
+		public SignupRequest(String email, String inputPassword) {
+			this.email = email;
+			this.inputPassword = inputPassword;
+		}
+
 		public SignupCommand toCommand() {
 			return SignupCommand.builder().email(email).password(inputPassword).build();
 		}
 	}
 
-	@AllArgsConstructor
 	public static class SignupResponse {
 		private String email;
 		private Date signupDate;
+
+		public SignupResponse(String email, Date signupDate) {
+			this.email = email;
+			this.signupDate = signupDate;
+		}
 	}
 
 }
