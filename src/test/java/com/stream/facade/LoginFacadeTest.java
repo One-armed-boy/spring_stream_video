@@ -14,11 +14,13 @@ import com.stream.domain.member.Member;
 import com.stream.domain.member.MemberRepository;
 import com.stream.domain.member.MemberService;
 import com.stream.domain.member.dto.login.LoginCommand;
+import com.stream.domain.member.dto.login.LoginResult;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.member.exception.IncorrectPasswordException;
 import com.stream.domain.role.Role;
 import com.stream.domain.role.RoleRepository;
 import com.stream.domain.role.RolesEnum;
+import com.stream.security.jwt.JwtMetadata;
 
 @SpringBootTest
 public class LoginFacadeTest {
@@ -66,9 +68,11 @@ public class LoginFacadeTest {
 
 		// when
 		Date beforeTest = new Date();
-		loginFacade.login(command);
+		LoginResult result = loginFacade.login(command);
 
 		// then
+		Assertions.assertThat(result.getAccessToken()).isNotNull();
+		Assertions.assertThat(result.getAccessTokenExpireMs()).isEqualTo(JwtMetadata.ACCESS_TOKEN_EXPIRE_MS);
 		Member member = memberService.getMemberByEmail(mockEmail);
 		Assertions.assertThat(member.getLastLoginAt()).isCloseTo(beforeTest, 5000);
 	}
