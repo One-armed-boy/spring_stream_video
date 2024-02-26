@@ -46,16 +46,35 @@ public class SignupControllerTest {
 	@Test
 	@DisplayName("서비스 내 멤버 X -> 신규 멤버 가입 요청 -> 성공 반환")
 	void signupSuccess() throws Exception {
+		// Given
 		String mockEmail = "test@test.com";
 		String mockPwd = "1q2w3e4r5t6y!!";
 
+		// When
+		mockMvc.perform(buildSignupApiReq(mockEmail, mockPwd))
+			// Then
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+	}
+
+	@Test
+	@DisplayName("서비스 내 특정 Member 존재 -> 동일 멤버 가입 요청 -> Bad Request(400) 반환")
+	void signupFailBecauseOfDuplicatedMember() throws Exception {
+		// Given
+		String mockEmail = "test2@test.com";
+		String mockPwd = "1q2w3e4r5t6y!!";
+		mockMvc.perform(buildSignupApiReq(mockEmail, mockPwd));
+
+		// When
+		mockMvc.perform(buildSignupApiReq(mockEmail, mockPwd))
+			// Then
+			.andExpect(MockMvcResultMatchers.status().isBadRequest());
+	}
+
+	private RequestBuilder buildSignupApiReq(String email, String password) throws Exception {
 		String content = new ObjectMapper().writeValueAsString(
-			SignupController.SignupRequest.builder().email(mockEmail).inputPassword(mockPwd).build());
-		RequestBuilder req = MockMvcRequestBuilders.post("/sign-up")
+			SignupController.SignupRequest.builder().email(email).inputPassword(password).build());
+		return MockMvcRequestBuilders.post("/sign-up")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(content);
-
-		this.mockMvc.perform(req)
-			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 	}
 }
