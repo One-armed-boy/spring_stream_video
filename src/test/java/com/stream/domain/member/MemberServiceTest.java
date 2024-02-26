@@ -9,47 +9,44 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.stream.domain.member.dto.CreateMemberCommand;
 import com.stream.domain.member.exception.DuplicatedMemberCreateException;
 import com.stream.domain.member.exception.MemberNotFoundException;
 import com.stream.domain.role.Role;
-import com.stream.domain.role.RoleRepository;
 import com.stream.domain.role.RoleService;
 import com.stream.domain.role.RolesEnum;
-import com.stream.domain.role.dto.CreateRoleCommand;
+import com.stream.util.TestHelper;
 
+@Import(TestHelper.class)
 @SpringBootTest
 public class MemberServiceTest {
 	private final MemberService memberService;
 	private final MemberRepository memberRepository;
 	private final RoleService roleService;
-	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final TestHelper testHelper;
 
 	@Autowired
 	public MemberServiceTest(MemberService memberService, MemberRepository memberRepository, RoleService roleService,
-		RoleRepository roleRepository,
-		PasswordEncoder passwordEncoder) {
+		PasswordEncoder passwordEncoder, TestHelper testHelper) {
 		this.memberService = memberService;
 		this.memberRepository = memberRepository;
 		this.roleService = roleService;
-		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.testHelper = testHelper;
 	}
 
 	@BeforeEach
-	void initRole() {
-		roleService.create(new CreateRoleCommand(RolesEnum.USER));
-		roleService.create(new CreateRoleCommand(RolesEnum.UPLOADER));
-		roleService.create(new CreateRoleCommand(RolesEnum.ADMIN));
+	void initDB() {
+		testHelper.initDB();
 	}
 
 	@AfterEach
 	void cleanDB() {
-		memberRepository.deleteAll();
-		roleRepository.deleteAll();
+		testHelper.clearTables(memberRepository);
 	}
 
 	@Test

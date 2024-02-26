@@ -9,24 +9,29 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Example;
 
 import com.stream.domain.video.dto.VideoDto;
+import com.stream.util.TestHelper;
 
+@Import(TestHelper.class)
 @SpringBootTest
 class VideoServiceTest {
 	private final VideoService videoService;
 	private final VideoRepository videoRepository;
+	private final TestHelper testHelper;
 
 	@Autowired
-	public VideoServiceTest(VideoService videoService, VideoRepository videoRepository) {
+	public VideoServiceTest(VideoService videoService, VideoRepository videoRepository, TestHelper testHelper) {
 		this.videoService = videoService;
 		this.videoRepository = videoRepository;
+		this.testHelper = testHelper;
 	}
 
 	@AfterEach
 	void cleanDB() {
-		videoRepository.deleteAll();
+		testHelper.clearTables(videoRepository);
 	}
 
 	@Test

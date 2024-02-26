@@ -22,9 +22,9 @@ import com.stream.util.TestHelper;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class SignupControllerTest {
-	private MockMvc mockMvc;
-	private TestHelper testHelper;
-	private MemberRepository memberRepository;
+	private final MockMvc mockMvc;
+	private final TestHelper testHelper;
+	private final MemberRepository memberRepository;
 
 	@Autowired
 	public SignupControllerTest(MockMvc mockMvc, TestHelper testHelper, MemberRepository memberRepository) {
