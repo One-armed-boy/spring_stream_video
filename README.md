@@ -22,6 +22,16 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  flyway:
+    enabled: true
+    baselineOnMigrate: true
+    validateOnMigrate: true
+    locations: classpath:db/migration
+
+logging:
+  level:
+    ROOT: INFO
+    com.stream: DEBUG
 
 my:
   app:
@@ -45,6 +55,12 @@ my:
 
 - 서버 실행 후 OpenAPI(Swagger)를 통해 확인
 - /swagger-ui/index.html
+
+## 인증
+
+- JWT 기반
+- 로그인 시 짧은 만료 기간의 액세스 토큰 발급
+- 토큰 내에 유저 식별자와 권한(역할 기반) 포함
 
 ## 코드 컨벤션
 
