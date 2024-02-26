@@ -60,6 +60,8 @@ public class SignupController {
 		}
 	}
 
+	@Getter
+	@ToString
 	public static class SignupResponse {
 		private String email;
 		private Date signupDate;
