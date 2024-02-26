@@ -14,8 +14,8 @@ public class TestHelper {
 	private RoleRepository roleRepository;
 
 	@Autowired
-	public TestHelper(RoleRepository repository) {
-		this.roleRepository = repository;
+	public TestHelper(RoleRepository roleRepository) {
+		this.roleRepository = roleRepository;
 	}
 
 	@Transactional
