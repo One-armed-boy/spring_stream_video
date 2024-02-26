@@ -1,0 +1,61 @@
+package com.stream.controller;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stream.domain.member.MemberRepository;
+import com.stream.util.TestHelper;
+
+@Import(TestHelper.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+public class SignupControllerTest {
+	private MockMvc mockMvc;
+	private TestHelper testHelper;
+	private MemberRepository memberRepository;
+
+	@Autowired
+	public SignupControllerTest(MockMvc mockMvc, TestHelper testHelper, MemberRepository memberRepository) {
+		this.mockMvc = mockMvc;
+		this.testHelper = testHelper;
+		this.memberRepository = memberRepository;
+	}
+
+	@BeforeEach
+	void initDB() {
+		testHelper.initDB();
+	}
+
+	@AfterEach
+	void clearDB() {
+		testHelper.clearTables(memberRepository);
+	}
+
+	@Test
+	@DisplayName("서비스 내 멤버 X -> 신규 멤버 가입 요청 -> 성공 반환")
+	void signupSuccess() throws Exception {
+		String mockEmail = "test@test.com";
+		String mockPwd = "1q2w3e4r5t6y!!";
+
+		String content = new ObjectMapper().writeValueAsString(
+			SignupController.SignupRequest.builder().email(mockEmail).inputPassword(mockPwd).build());
+		RequestBuilder req = MockMvcRequestBuilders.post("/sign-up")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(content);
+
+		this.mockMvc.perform(req)
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+	}
+}
