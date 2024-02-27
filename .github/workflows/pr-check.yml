@@ -43,5 +43,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 40
           min-coverage-changed-files: 60
+          update-comment: true
           pass-emoji: ':green_circle:'
           fail-emoji: ':red_circle:'
