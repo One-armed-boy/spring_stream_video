@@ -7,41 +7,47 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.stream.domain.member.Member;
+import com.stream.domain.member.MemberRepository;
 import com.stream.domain.member.MemberService;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.member.dto.signup.SignupResult;
 import com.stream.domain.member.exception.DuplicatedMemberCreateException;
-import com.stream.util.TestHelper;
+import com.stream.domain.role.Role;
+import com.stream.domain.role.RoleRepository;
+import com.stream.domain.role.RolesEnum;
 
-@Import(TestHelper.class)
 @SpringBootTest
 public class SignupFacadeTest {
 	private final SignupFacade signupFacade;
 	private final MemberService memberService;
+	private final MemberRepository memberRepository;
+	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
-	private final TestHelper testHelper;
 
 	@Autowired
-	public SignupFacadeTest(SignupFacade signupFacade, MemberService memberService,
-		PasswordEncoder passwordEncoder, TestHelper testHelper) {
+	public SignupFacadeTest(SignupFacade signupFacade, MemberService memberService, MemberRepository memberRepository,
+		RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
 		this.signupFacade = signupFacade;
 		this.memberService = memberService;
+		this.memberRepository = memberRepository;
+		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
-		this.testHelper = testHelper;
 	}
 
 	@BeforeEach
-	void initDB() {
-		testHelper.initTables();
+	void initRole() {
+		roleRepository.save(new Role(RolesEnum.USER));
+		roleRepository.save(new Role(RolesEnum.UPLOADER));
+		roleRepository.save(new Role(RolesEnum.ADMIN));
 	}
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables();
+		memberRepository.deleteAll();
+		roleRepository.deleteAll();
 	}
 
 	@Test

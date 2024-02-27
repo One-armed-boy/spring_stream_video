@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.stream.domain.video.Video;
@@ -18,26 +17,22 @@ import com.stream.domain.video.VideoService;
 import com.stream.domain.video.dto.UploadVideoDto;
 import com.stream.storage.DummyStorageStrategy;
 import com.stream.storage.StorageStrategy;
-import com.stream.util.TestHelper;
 
-@Import(TestHelper.class)
 @SpringBootTest
 public class UploadFacadeTest {
 	private final VideoRepository videoRepository;
 	private final UploadFacade uploadFacade;
-	private final TestHelper testHelper;
 
 	@Autowired
-	public UploadFacadeTest(VideoRepository videoRepository, VideoService videoService, TestHelper testHelper) {
+	public UploadFacadeTest(VideoRepository videoRepository, VideoService videoService) {
 		this.videoRepository = videoRepository;
 		StorageStrategy storageStrategy = new DummyStorageStrategy();
 		this.uploadFacade = new UploadFacade(videoService, storageStrategy);
-		this.testHelper = testHelper;
 	}
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables();
+		videoRepository.deleteAll();
 	}
 
 	@Test

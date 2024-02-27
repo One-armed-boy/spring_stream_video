@@ -9,42 +9,48 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 
 import com.stream.domain.member.Member;
+import com.stream.domain.member.MemberRepository;
 import com.stream.domain.member.MemberService;
 import com.stream.domain.member.dto.login.LoginCommand;
 import com.stream.domain.member.dto.login.LoginResult;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.member.exception.IncorrectPasswordException;
+import com.stream.domain.role.Role;
+import com.stream.domain.role.RoleRepository;
+import com.stream.domain.role.RolesEnum;
 import com.stream.security.jwt.JwtMetadata;
-import com.stream.util.TestHelper;
 
-@Import(TestHelper.class)
 @SpringBootTest
 public class LoginFacadeTest {
 	private final LoginFacade loginFacade;
 	private final SignupFacade signupFacade;
 	private final MemberService memberService;
-	private final TestHelper testHelper;
+	private final MemberRepository memberRepository;
+	private final RoleRepository roleRepository;
 
 	@Autowired
 	public LoginFacadeTest(LoginFacade loginFacade, SignupFacade signupFacade, MemberService memberService,
-		TestHelper testHelper) {
+		MemberRepository memberRepository, RoleRepository roleRepository) {
 		this.loginFacade = loginFacade;
 		this.signupFacade = signupFacade;
 		this.memberService = memberService;
-		this.testHelper = testHelper;
+		this.memberRepository = memberRepository;
+		this.roleRepository = roleRepository;
 	}
 
 	@BeforeEach
-	void initDB() {
-		testHelper.initTables();
+	void initRole() {
+		roleRepository.save(new Role(RolesEnum.USER));
+		roleRepository.save(new Role(RolesEnum.UPLOADER));
+		roleRepository.save(new Role(RolesEnum.ADMIN));
 	}
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables();
+		memberRepository.deleteAll();
+		roleRepository.deleteAll();
 	}
 
 	@Test

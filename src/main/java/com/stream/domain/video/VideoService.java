@@ -41,7 +41,7 @@ public class VideoService {
 	}
 
 	@Transactional
-	public List<Video> createVideo(Video... video) {
-		return videoRepository.saveAll(List.of(video));
+	public void createVideo(Video... video) {
+		videoRepository.saveAll(List.of(video));
 	}
 }

@@ -10,18 +10,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import com.stream.domain.role.RolesEnum;
-import com.stream.security.jwt.JwtAuthFailFilter;
 import com.stream.security.jwt.JwtAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-	private final JwtAuthFailFilter jwtAuthFailFilter;
 
 	@Autowired
-	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, JwtAuthFailFilter jwtAuthFailFilter) {
+	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
 		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-		this.jwtAuthFailFilter = jwtAuthFailFilter;
 	}
 
 	@Bean
@@ -35,7 +32,6 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 			.httpBasic(c -> c.disable())
 			.addFilterAfter(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
-			.addFilterBefore(jwtAuthFailFilter, JwtAuthenticationFilter.class)
 			.authorizeHttpRequests(c -> {
 				c.requestMatchers("/login", "/sign-up").permitAll()
 					.anyRequest()

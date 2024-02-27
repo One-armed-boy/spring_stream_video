@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 
 import com.stream.domain.video.Video;
@@ -15,26 +14,22 @@ import com.stream.domain.video.VideoService;
 import com.stream.domain.video.exception.VideoNotFoundException;
 import com.stream.storage.DummyStorageStrategy;
 import com.stream.storage.StorageStrategy;
-import com.stream.util.TestHelper;
 
-@Import(TestHelper.class)
 @SpringBootTest
 public class StreamingFacadeTest {
 	private final StreamingFacade streamingFacade;
 	private final VideoRepository videoRepository;
-	private final TestHelper testHelper;
 
 	@Autowired
-	public StreamingFacadeTest(VideoRepository videoRepository, VideoService videoService, TestHelper testHelper) {
+	public StreamingFacadeTest(VideoRepository videoRepository, VideoService videoService) {
 		this.videoRepository = videoRepository;
 		StorageStrategy storageStrategy = new DummyStorageStrategy();
 		this.streamingFacade = new StreamingFacade(videoService, storageStrategy);
-		this.testHelper = testHelper;
 	}
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables();
+		videoRepository.deleteAll();
 	}
 
 	@Test
