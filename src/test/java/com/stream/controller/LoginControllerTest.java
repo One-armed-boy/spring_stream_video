@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stream.domain.member.MemberRepository;
+import com.stream.domain.member.dto.signup.SignupCommand;
+import com.stream.facade.SignupFacade;
 import com.stream.security.jwt.JwtMetadata;
 import com.stream.util.TestHelper;
 
@@ -26,15 +28,15 @@ public class LoginControllerTest {
 	private final MockMvc mockMvc;
 	private final TestHelper testHelper;
 	private final MemberRepository memberRepository;
-	private final SignupController signupController;
+	private final SignupFacade signupFacade;
 
 	@Autowired
 	public LoginControllerTest(MockMvc mockMvc, TestHelper testHelper, MemberRepository memberRepository,
-		SignupController signupController) {
+		SignupFacade signupFacade) {
 		this.mockMvc = mockMvc;
 		this.testHelper = testHelper;
 		this.memberRepository = memberRepository;
-		this.signupController = signupController;
+		this.signupFacade = signupFacade;
 	}
 
 	@BeforeEach
@@ -97,6 +99,6 @@ public class LoginControllerTest {
 	}
 
 	private void signup(String email, String password) {
-		signupController.signup(SignupController.SignupRequest.builder().email(email).inputPassword(password).build());
+		signupFacade.signUp(SignupCommand.builder().email(email).password(password).build());
 	}
 }
