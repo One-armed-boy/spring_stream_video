@@ -16,11 +16,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.stream.domain.member.dto.login.LoginCommand;
 import com.stream.domain.member.dto.login.LoginResult;
+import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.video.Video;
-import com.stream.domain.video.VideoRepository;
 import com.stream.domain.video.VideoService;
 import com.stream.facade.LoginFacade;
+import com.stream.facade.SignupFacade;
+import com.stream.security.jwt.JwtMetadata;
 import com.stream.util.TestHelper;
+
+import jakarta.servlet.http.Cookie;
 
 @Import(TestHelper.class)
 @SpringBootTest
@@ -28,19 +32,19 @@ import com.stream.util.TestHelper;
 public class VideoControllerTest {
 	private final MockMvc mockMvc;
 	private final TestHelper testHelper;
-	private final VideoRepository videoRepository;
 	private final VideoService videoService;
 	private final LoginFacade loginFacade;
+	private final SignupFacade signupFacade;
 
 	@Autowired
-	public VideoControllerTest(MockMvc mockMvc, TestHelper testHelper, VideoRepository videoRepository,
+	public VideoControllerTest(MockMvc mockMvc, TestHelper testHelper,
 		VideoService videoService,
-		LoginFacade loginFacade) {
+		LoginFacade loginFacade, SignupFacade signupFacade) {
 		this.mockMvc = mockMvc;
 		this.testHelper = testHelper;
-		this.videoRepository = videoRepository;
 		this.videoService = videoService;
 		this.loginFacade = loginFacade;
+		this.signupFacade = signupFacade;
 	}
 
 	@BeforeEach
@@ -50,7 +54,7 @@ public class VideoControllerTest {
 
 	@AfterEach
 	void clearDB() {
-		testHelper.clearTables(videoRepository);
+		testHelper.clearTables();
 	}
 
 	@Test
@@ -63,6 +67,25 @@ public class VideoControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.get("/videos"))
 			// then
 			.andExpect(MockMvcResultMatchers.status().isForbidden());
+	}
+
+	@Test
+	@DisplayName("DB 내 비디오 데이터 존재, 회원 가입 수행한 계정 -> 비디오 목록 요청 -> 정상 반환")
+	void listVideoSuccess() throws Exception {
+		// given
+		var videosInTable = initVideoTable(List.of("video1", "video2"));
+
+		var mockEmail = "testtest@test.com";
+		var mockPwd = "qwerty12345";
+		signup(mockEmail, mockPwd);
+		var accessToken = loginAndGetAccessToken(mockEmail, mockPwd);
+		var authCookie = new Cookie(JwtMetadata.ACCESS_TOKEN_KEY, accessToken);
+
+		// when
+		mockMvc.perform(
+				MockMvcRequestBuilders.get("/videos").cookie(authCookie))
+			// then
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 	}
 
 	private List<Video> initVideoTable(List<String> videoNames) {
@@ -78,6 +101,10 @@ public class VideoControllerTest {
 
 	private List<Video> createVideos(List<Video> videos) {
 		return videoService.createVideo(videos.toArray(new Video[videos.size()]));
+	}
+
+	private void signup(String email, String password) {
+		signupFacade.signUp(SignupCommand.builder().email(email).password(password).build());
 	}
 
 	private String loginAndGetAccessToken(String email, String password) {
