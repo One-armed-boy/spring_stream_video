@@ -32,7 +32,7 @@ public class SignupControllerTest {
 
 	@BeforeEach
 	void initDB() {
-		testHelper.initDB();
+		testHelper.initTables();
 	}
 
 	@AfterEach

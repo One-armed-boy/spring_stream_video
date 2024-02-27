@@ -38,7 +38,7 @@ public class LoginControllerTest {
 
 	@BeforeEach
 	void initDB() {
-		testHelper.initDB();
+		testHelper.initTables();
 	}
 
 	@AfterEach

@@ -41,7 +41,7 @@ public class MemberServiceTest {
 
 	@BeforeEach
 	void initDB() {
-		testHelper.initDB();
+		testHelper.initTables();
 	}
 
 	@AfterEach

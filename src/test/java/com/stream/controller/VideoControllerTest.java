@@ -49,7 +49,7 @@ public class VideoControllerTest {
 
 	@BeforeEach
 	void initDB() {
-		testHelper.initDB();
+		testHelper.initTables();
 	}
 
 	@AfterEach

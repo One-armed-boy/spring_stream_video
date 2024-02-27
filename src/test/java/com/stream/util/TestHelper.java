@@ -25,7 +25,7 @@ public class TestHelper {
 	}
 
 	@Transactional
-	public void initDB() {
+	public void initTables() {
 		initRole();
 	}
 

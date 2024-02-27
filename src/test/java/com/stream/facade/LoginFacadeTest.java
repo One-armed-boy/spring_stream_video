@@ -39,7 +39,7 @@ public class LoginFacadeTest {
 
 	@BeforeEach
 	void initDB() {
-		testHelper.initDB();
+		testHelper.initTables();
 	}
 
 	@AfterEach
