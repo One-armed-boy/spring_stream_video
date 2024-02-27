@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stream.controller.dto.video.GetVideoResponse;
 import com.stream.controller.dto.video.ListVideoResponse;
 import com.stream.domain.member.dto.login.LoginCommand;
 import com.stream.domain.member.dto.login.LoginResult;
@@ -97,6 +98,61 @@ public class VideoControllerTest {
 				Assertions.assertThat(videosInTable.stream()
 					.map(VideoDto::convertDomainToDto)
 					.anyMatch(videoDto -> !resultVideos.contains(videoDto))).isFalse();
+			});
+	}
+
+	@Test
+	@DisplayName("로그인 미 수행 클라이언트 -> 특정 비디오 조회 요청 -> Forbidden(403)")
+	void getVideoFailBecauseNotLogin() throws Exception {
+		// given
+		initVideoTable(List.of("video_sample"));
+		// when
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos?id=1"))
+			// then
+			.andExpect(MockMvcResultMatchers.status().isForbidden());
+	}
+
+	@Test
+	@DisplayName("로그인 수행 클라이언트 -> DB 내 존재하지 않는 id 값을 통한 비디오 get 요청 -> NotFound(404)")
+	void getVideoFailBecauseInvalidId() throws Exception {
+		// given
+		var video = initVideoTable(List.of("video_sample")).get(0);
+
+		var mockEmail = "test@test.com";
+		var mockPwd = "1q2w3e4r5t6y7u8i9o";
+		signup(mockEmail, mockPwd);
+		var accessToken = loginAndGetAccessToken(mockEmail, mockPwd);
+		var cookie = new Cookie(JwtMetadata.ACCESS_TOKEN_KEY, accessToken);
+
+		// when
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos")
+				.cookie(cookie)
+				.param("id", String.valueOf((video.getId() + 1))))
+			// then
+			.andExpect(MockMvcResultMatchers.status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("로그인 수행 클라이언트 -> DB 내 존재하는 Video 조회 -> 조회 성공")
+	void getVideoSuccess() throws Exception {
+		// given
+		var video = initVideoTable(List.of("video1")).get(0);
+
+		var mockEmail = "test@test.com";
+		var mockPwd = "12345678789qwertyui";
+		signup(mockEmail, mockPwd);
+		var accessToken = loginAndGetAccessToken(mockEmail, mockPwd);
+		var cookie = new Cookie(JwtMetadata.ACCESS_TOKEN_KEY, accessToken);
+
+		// when
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos").cookie(cookie).param("id", String.valueOf(video.getId())))
+			// then
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+			.andDo(result -> {
+				GetVideoResponse videoResponse = new ObjectMapper().readValue(result.getResponse().getContentAsString(),
+					GetVideoResponse.class);
+				Assertions.assertThat(videoResponse)
+					.isEqualTo(GetVideoResponse.convertDtoToResponse(VideoDto.convertDomainToDto(video)));
 			});
 	}
 
