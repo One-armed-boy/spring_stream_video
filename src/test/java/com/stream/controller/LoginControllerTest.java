@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stream.controller.dto.login.LoginRequest;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.facade.SignupFacade;
 import com.stream.security.jwt.JwtMetadata;
@@ -91,7 +92,7 @@ public class LoginControllerTest {
 
 	private RequestBuilder buildLoginApiReq(String email, String password) throws Exception {
 		String content = new ObjectMapper().writeValueAsString(
-			LoginController.LoginRequest.builder().email(email).inputPassword(password).build());
+			LoginRequest.builder().email(email).inputPassword(password).build());
 		return MockMvcRequestBuilders.post("/login").contentType(MediaType.APPLICATION_JSON).content(content);
 	}
 

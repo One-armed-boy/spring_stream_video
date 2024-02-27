@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stream.controller.dto.signup.SignupRequest;
 import com.stream.util.TestHelper;
 
 @Import(TestHelper.class)
@@ -69,7 +70,7 @@ public class SignupControllerTest {
 
 	private RequestBuilder buildSignupApiReq(String email, String password) throws Exception {
 		String content = new ObjectMapper().writeValueAsString(
-			SignupController.SignupRequest.builder().email(email).inputPassword(password).build());
+			SignupRequest.builder().email(email).inputPassword(password).build());
 		return MockMvcRequestBuilders.post("/sign-up")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(content);
