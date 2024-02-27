@@ -13,7 +13,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.stream.exception.BaseException;
 import com.stream.security.jwt.exception.AccessTokenNotFoundException;
+import com.stream.security.jwt.exception.JwtAuthWrapperException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,25 +37,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		DecodedJwtAccessToken decodedToken = jwtManager.decodeToken(extractAccessToken(request));
+		try {
+			DecodedJwtAccessToken decodedToken = jwtManager.decodeToken(extractAccessToken(request));
+			String email = decodedToken.getEmail();
+			String roleName = decodedToken.getRole().getName().name();
+			GrantedAuthority authority = new SimpleGrantedAuthority(roleName);
 
-		String email = decodedToken.getEmail();
-		String roleName = decodedToken.getRole().getName().name();
-		GrantedAuthority authority = new SimpleGrantedAuthority(roleName);
+			Authentication auth = new UsernamePasswordAuthenticationToken(email, null,
+				List.of(authority));
 
-		Authentication auth = new UsernamePasswordAuthenticationToken(email, null,
-			List.of(authority));
+			SecurityContextHolder.getContext().setAuthentication(auth);
 
-		SecurityContextHolder.getContext().setAuthentication(auth);
-
-		logger.debug(
-			"Jwt Auth Success (path: " + request.getServletPath() + " token: " + decodedToken + " )");
+			logger.debug(
+				"Jwt Auth Success (path: " + request.getServletPath() + " token: " + decodedToken + " )");
+		} catch (BaseException err) {
+			throw new JwtAuthWrapperException(err);
+		}
 
 		filterChain.doFilter(request, response);
 	}
 
 	private String extractAccessToken(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
+		if (cookies == null) {
+			throw new AccessTokenNotFoundException();
+		}
 		Cookie accessTokenCookie = Arrays.stream(cookies)
 			.filter(cookie -> cookie.getName().equals(JwtMetadata.ACCESS_TOKEN_KEY))
 			.findFirst()
@@ -63,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
-		String path = request.getServletPath();
+		String path = request.getRequestURI();
 		return path.equals("/login") || path.equals("/sign-up");
 	}
 }
