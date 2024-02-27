@@ -2,6 +2,7 @@ package com.stream.controller;
 
 import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,11 +15,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stream.controller.dto.video.ListVideoResponse;
 import com.stream.domain.member.dto.login.LoginCommand;
 import com.stream.domain.member.dto.login.LoginResult;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.video.Video;
 import com.stream.domain.video.VideoService;
+import com.stream.domain.video.dto.VideoDto;
 import com.stream.facade.LoginFacade;
 import com.stream.facade.SignupFacade;
 import com.stream.security.jwt.JwtMetadata;
@@ -85,7 +89,15 @@ public class VideoControllerTest {
 		mockMvc.perform(
 				MockMvcRequestBuilders.get("/videos").cookie(authCookie))
 			// then
-			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+			.andDo(result -> {
+				String contentString = result.getResponse().getContentAsString();
+				List<VideoDto> resultVideos = new ObjectMapper().readValue(contentString, ListVideoResponse.class)
+					.getVideos();
+				Assertions.assertThat(videosInTable.stream()
+					.map(VideoDto::convertDomainToDto)
+					.anyMatch(videoDto -> !resultVideos.contains(videoDto))).isFalse();
+			});
 	}
 
 	private List<Video> initVideoTable(List<String> videoNames) {

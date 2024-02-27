@@ -5,11 +5,15 @@ import java.util.Date;
 import com.stream.domain.video.Video;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
+@NoArgsConstructor
+@EqualsAndHashCode
 public class VideoDto {
 	private long id;
 	private String fileTag;
