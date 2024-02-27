@@ -46,7 +46,7 @@ public class MemberServiceTest {
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables(memberRepository);
+		testHelper.clearTables();
 	}
 
 	@Test

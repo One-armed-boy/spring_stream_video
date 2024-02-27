@@ -34,7 +34,7 @@ public class StreamingFacadeTest {
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables(videoRepository);
+		testHelper.clearTables();
 	}
 
 	@Test

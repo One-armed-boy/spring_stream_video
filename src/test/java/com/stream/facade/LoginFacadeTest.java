@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import com.stream.domain.member.Member;
-import com.stream.domain.member.MemberRepository;
 import com.stream.domain.member.MemberService;
 import com.stream.domain.member.dto.login.LoginCommand;
 import com.stream.domain.member.dto.login.LoginResult;
@@ -27,16 +26,14 @@ public class LoginFacadeTest {
 	private final LoginFacade loginFacade;
 	private final SignupFacade signupFacade;
 	private final MemberService memberService;
-	private final MemberRepository memberRepository;
 	private final TestHelper testHelper;
 
 	@Autowired
 	public LoginFacadeTest(LoginFacade loginFacade, SignupFacade signupFacade, MemberService memberService,
-		MemberRepository memberRepository, TestHelper testHelper) {
+		TestHelper testHelper) {
 		this.loginFacade = loginFacade;
 		this.signupFacade = signupFacade;
 		this.memberService = memberService;
-		this.memberRepository = memberRepository;
 		this.testHelper = testHelper;
 	}
 
@@ -47,7 +44,7 @@ public class LoginFacadeTest {
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables(memberRepository);
+		testHelper.clearTables();
 	}
 
 	@Test

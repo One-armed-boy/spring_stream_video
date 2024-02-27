@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stream.domain.member.MemberRepository;
 import com.stream.util.TestHelper;
 
 @Import(TestHelper.class)
@@ -24,13 +23,11 @@ import com.stream.util.TestHelper;
 public class SignupControllerTest {
 	private final MockMvc mockMvc;
 	private final TestHelper testHelper;
-	private final MemberRepository memberRepository;
 
 	@Autowired
-	public SignupControllerTest(MockMvc mockMvc, TestHelper testHelper, MemberRepository memberRepository) {
+	public SignupControllerTest(MockMvc mockMvc, TestHelper testHelper) {
 		this.mockMvc = mockMvc;
 		this.testHelper = testHelper;
-		this.memberRepository = memberRepository;
 	}
 
 	@BeforeEach
@@ -40,7 +37,7 @@ public class SignupControllerTest {
 
 	@AfterEach
 	void clearDB() {
-		testHelper.clearTables(memberRepository);
+		testHelper.clearTables();
 	}
 
 	@Test

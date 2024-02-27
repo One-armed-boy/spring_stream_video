@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.stream.domain.member.Member;
-import com.stream.domain.member.MemberRepository;
 import com.stream.domain.member.MemberService;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.member.dto.signup.SignupResult;
@@ -23,16 +22,14 @@ import com.stream.util.TestHelper;
 public class SignupFacadeTest {
 	private final SignupFacade signupFacade;
 	private final MemberService memberService;
-	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final TestHelper testHelper;
 
 	@Autowired
-	public SignupFacadeTest(SignupFacade signupFacade, MemberService memberService, MemberRepository memberRepository,
+	public SignupFacadeTest(SignupFacade signupFacade, MemberService memberService,
 		PasswordEncoder passwordEncoder, TestHelper testHelper) {
 		this.signupFacade = signupFacade;
 		this.memberService = memberService;
-		this.memberRepository = memberRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.testHelper = testHelper;
 	}
@@ -44,7 +41,7 @@ public class SignupFacadeTest {
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables(memberRepository);
+		testHelper.clearTables();
 	}
 
 	@Test

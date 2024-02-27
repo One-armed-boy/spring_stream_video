@@ -31,7 +31,7 @@ class VideoServiceTest {
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables(videoRepository);
+		testHelper.clearTables();
 	}
 
 	@Test

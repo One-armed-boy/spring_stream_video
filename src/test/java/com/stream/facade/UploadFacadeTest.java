@@ -37,7 +37,7 @@ public class UploadFacadeTest {
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables(videoRepository);
+		testHelper.clearTables();
 	}
 
 	@Test

@@ -2,20 +2,26 @@ package com.stream.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.stream.domain.member.MemberRepository;
 import com.stream.domain.role.Role;
 import com.stream.domain.role.RoleRepository;
 import com.stream.domain.role.RolesEnum;
+import com.stream.domain.video.VideoRepository;
 
 @TestComponent
 public class TestHelper {
-	private RoleRepository roleRepository;
+	private final RoleRepository roleRepository;
+	private final MemberRepository memberRepository;
+	private final VideoRepository videoRepository;
 
 	@Autowired
-	public TestHelper(RoleRepository roleRepository) {
+	public TestHelper(RoleRepository roleRepository, MemberRepository memberRepository,
+		VideoRepository videoRepository) {
 		this.roleRepository = roleRepository;
+		this.memberRepository = memberRepository;
+		this.videoRepository = videoRepository;
 	}
 
 	@Transactional
@@ -32,12 +38,9 @@ public class TestHelper {
 	}
 
 	@Transactional
-	public void clearTables(JpaRepository... repositories) {
-		// role 테이블에는 initDB() 내에서 명시적으로 생성한 데이터가 존재하기 때문에 항상 비워줌
+	public void clearTables() {
 		roleRepository.deleteAll();
-
-		for (var repository : repositories) {
-			repository.deleteAll();
-		}
+		memberRepository.deleteAll();
+		videoRepository.deleteAll();
 	}
 }

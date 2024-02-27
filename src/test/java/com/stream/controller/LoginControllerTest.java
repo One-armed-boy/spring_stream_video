@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stream.domain.member.MemberRepository;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.facade.SignupFacade;
 import com.stream.security.jwt.JwtMetadata;
@@ -27,15 +26,13 @@ import com.stream.util.TestHelper;
 public class LoginControllerTest {
 	private final MockMvc mockMvc;
 	private final TestHelper testHelper;
-	private final MemberRepository memberRepository;
 	private final SignupFacade signupFacade;
 
 	@Autowired
-	public LoginControllerTest(MockMvc mockMvc, TestHelper testHelper, MemberRepository memberRepository,
+	public LoginControllerTest(MockMvc mockMvc, TestHelper testHelper,
 		SignupFacade signupFacade) {
 		this.mockMvc = mockMvc;
 		this.testHelper = testHelper;
-		this.memberRepository = memberRepository;
 		this.signupFacade = signupFacade;
 	}
 
@@ -46,7 +43,7 @@ public class LoginControllerTest {
 
 	@AfterEach
 	void cleanDB() {
-		testHelper.clearTables(memberRepository);
+		testHelper.clearTables();
 	}
 
 	@Test
