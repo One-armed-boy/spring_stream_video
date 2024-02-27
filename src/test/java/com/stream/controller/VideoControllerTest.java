@@ -82,13 +82,11 @@ public class VideoControllerTest {
 
 		var mockEmail = "testtest@test.com";
 		var mockPwd = "qwerty12345";
-		signup(mockEmail, mockPwd);
-		var accessToken = loginAndGetAccessToken(mockEmail, mockPwd);
-		var authCookie = new Cookie(JwtMetadata.ACCESS_TOKEN_KEY, accessToken);
+		var cookie = signupAndLoginAndExtractCookie(mockEmail, mockPwd);
 
 		// when
 		mockMvc.perform(
-				MockMvcRequestBuilders.get("/videos").cookie(authCookie))
+				MockMvcRequestBuilders.get("/videos").cookie(cookie))
 			// then
 			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 			.andDo(result -> {
@@ -107,7 +105,7 @@ public class VideoControllerTest {
 		// given
 		initVideoTable(List.of("video_sample"));
 		// when
-		mockMvc.perform(MockMvcRequestBuilders.get("/videos?id=1"))
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos").param("id", String.valueOf(1)))
 			// then
 			.andExpect(MockMvcResultMatchers.status().isForbidden());
 	}
@@ -120,9 +118,7 @@ public class VideoControllerTest {
 
 		var mockEmail = "test@test.com";
 		var mockPwd = "1q2w3e4r5t6y7u8i9o";
-		signup(mockEmail, mockPwd);
-		var accessToken = loginAndGetAccessToken(mockEmail, mockPwd);
-		var cookie = new Cookie(JwtMetadata.ACCESS_TOKEN_KEY, accessToken);
+		var cookie = signupAndLoginAndExtractCookie(mockEmail, mockPwd);
 
 		// when
 		mockMvc.perform(MockMvcRequestBuilders.get("/videos")
@@ -140,9 +136,7 @@ public class VideoControllerTest {
 
 		var mockEmail = "test@test.com";
 		var mockPwd = "12345678789qwertyui";
-		signup(mockEmail, mockPwd);
-		var accessToken = loginAndGetAccessToken(mockEmail, mockPwd);
-		var cookie = new Cookie(JwtMetadata.ACCESS_TOKEN_KEY, accessToken);
+		var cookie = signupAndLoginAndExtractCookie(mockEmail, mockPwd);
 
 		// when
 		mockMvc.perform(MockMvcRequestBuilders.get("/videos").cookie(cookie).param("id", String.valueOf(video.getId())))
@@ -169,6 +163,12 @@ public class VideoControllerTest {
 
 	private List<Video> createVideos(List<Video> videos) {
 		return videoService.createVideo(videos.toArray(new Video[videos.size()]));
+	}
+
+	private Cookie signupAndLoginAndExtractCookie(String email, String password) {
+		signup(email, password);
+		var accessToken = loginAndGetAccessToken(email, password);
+		return new Cookie(JwtMetadata.ACCESS_TOKEN_KEY, accessToken);
 	}
 
 	private void signup(String email, String password) {
