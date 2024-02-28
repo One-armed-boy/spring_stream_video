@@ -5,11 +5,14 @@ import java.util.Date;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.stream.domain.member.Member;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -24,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Video {
 	@Id
-	@Column(name = "id", nullable = false, updatable = false)
+	@Column(name = "video_id", nullable = false, updatable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
@@ -53,13 +56,26 @@ public class Video {
 	@Column(name = "updated_at", nullable = false)
 	private Date updatedAt;
 
+	@ManyToOne
+	private Member member;
+
 	@Builder
-	public Video(long id, String fileTag, String extension, String path, long size, String description) {
+	public Video(long id, String fileTag, String extension, String path, long size, String description, Member member) {
 		this.id = id;
 		this.fileTag = fileTag;
 		this.extension = extension;
 		this.path = path;
 		this.size = size;
 		this.description = description;
+		this.setMember(member);
+	}
+
+	public void setMember(Member member) {
+		if (this.member != null) {
+			this.member.getVideoList().remove(this);
+		}
+		this.member = member;
+		this.member.getVideoList().add(this);
 	}
 }
+
