@@ -91,11 +91,9 @@ public class VideoControllerTest {
 			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 			.andDo(result -> {
 				String contentString = result.getResponse().getContentAsString();
-				List<VideoDto> resultVideos = new ObjectMapper().readValue(contentString, ListVideoResponse.class)
-					.getVideos();
-				Assertions.assertThat(videosInTable.stream()
-					.map(VideoDto::convertDomainToDto)
-					.anyMatch(videoDto -> !resultVideos.contains(videoDto))).isFalse();
+				ListVideoResponse response = new ObjectMapper().readValue(contentString, ListVideoResponse.class);
+				Assertions.assertThat(response)
+					.isEqualTo(videosInTable.stream().map(VideoDto::convertDomainToDto).toList());
 			});
 	}
 
