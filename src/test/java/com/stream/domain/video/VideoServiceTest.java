@@ -77,7 +77,8 @@ class VideoServiceTest {
 		var member = testHelper.signup(mockEmail, mockPwd);
 
 		Video video1 = createVideoEntity("video1", member);
-		Video video2 = createVideoEntity("video2", member);
+		// Video.member 필드는 nullable
+		Video video2 = createVideoEntity("video2", null);
 
 		List<Video> videoListForSave = List.of(video1, video2);
 		videoService.createVideo(video1, video2);

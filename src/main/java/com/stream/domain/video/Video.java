@@ -79,6 +79,9 @@ public class Video {
 			this.member.getVideoList().remove(this);
 		}
 		this.member = member;
+		if (member == null) {
+			return;
+		}
 		this.member.getVideoList().add(this);
 	}
 }
