@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.stream.domain.member.Member;
 import com.stream.domain.member.MemberService;
-import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.video.dto.VideoDto;
 import com.stream.facade.SignupFacade;
 import com.stream.util.TestHelper;
@@ -75,7 +74,7 @@ class VideoServiceTest {
 		// Given
 		var mockEmail = "test@test.com";
 		var mockPwd = "12345qwerty";
-		var member = signup(mockEmail, mockPwd);
+		var member = testHelper.signup(mockEmail, mockPwd);
 
 		Video video1 = createVideoEntity("video1", member);
 		Video video2 = createVideoEntity("video2", member);
@@ -126,7 +125,7 @@ class VideoServiceTest {
 		// Given
 		var mockEmail = "test@test.com";
 		var mockPwd = "12345qwerty";
-		var member = signup(mockEmail, mockPwd);
+		var member = testHelper.signup(mockEmail, mockPwd);
 
 		Video videoForSave = createVideoEntity("video", member);
 
@@ -151,7 +150,7 @@ class VideoServiceTest {
 		// Given
 		var mockEmail = "test@test.com";
 		var mockPwd = "12345qwerty";
-		var member = signup(mockEmail, mockPwd);
+		var member = testHelper.signup(mockEmail, mockPwd);
 
 		// When
 		Video videoForSave = createVideoEntity("test", member);
@@ -173,10 +172,5 @@ class VideoServiceTest {
 			.size(1000)
 			.member(member)
 			.build();
-	}
-
-	private Member signup(String email, String password) {
-		signupFacade.signUp(SignupCommand.builder().email(email).password(password).build());
-		return memberService.getMemberByEmail(email);
 	}
 }

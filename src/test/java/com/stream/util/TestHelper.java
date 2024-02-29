@@ -4,27 +4,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.stream.domain.member.Member;
 import com.stream.domain.member.MemberRepository;
+import com.stream.domain.member.MemberService;
+import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.role.Role;
 import com.stream.domain.role.RoleRepository;
 import com.stream.domain.role.RolesEnum;
 import com.stream.domain.video.VideoRepository;
+import com.stream.facade.SignupFacade;
 
 @TestComponent
+@Transactional
 public class TestHelper {
 	private final RoleRepository roleRepository;
 	private final MemberRepository memberRepository;
 	private final VideoRepository videoRepository;
+	private final SignupFacade signupFacade;
+	private final MemberService memberService;
 
 	@Autowired
 	public TestHelper(RoleRepository roleRepository, MemberRepository memberRepository,
-		VideoRepository videoRepository) {
+		VideoRepository videoRepository, SignupFacade signupFacade, MemberService memberService) {
 		this.roleRepository = roleRepository;
 		this.memberRepository = memberRepository;
 		this.videoRepository = videoRepository;
+		this.signupFacade = signupFacade;
+		this.memberService = memberService;
 	}
 
-	@Transactional
 	public void initTables() {
 		initRole();
 	}
@@ -37,10 +45,14 @@ public class TestHelper {
 		}
 	}
 
-	@Transactional
 	public void clearTables() {
 		roleRepository.deleteAll();
 		memberRepository.deleteAll();
 		videoRepository.deleteAll();
+	}
+
+	public Member signup(String email, String password) {
+		signupFacade.signUp(SignupCommand.builder().email(email).password(password).build());
+		return memberService.getMemberByEmail(email);
 	}
 }
