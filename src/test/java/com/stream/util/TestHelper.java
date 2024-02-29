@@ -46,9 +46,9 @@ public class TestHelper {
 	}
 
 	public void clearTables() {
-		roleRepository.deleteAll();
-		memberRepository.deleteAll();
 		videoRepository.deleteAll();
+		memberRepository.deleteAll();
+		roleRepository.deleteAll();
 	}
 
 	public Member signup(String email, String password) {
