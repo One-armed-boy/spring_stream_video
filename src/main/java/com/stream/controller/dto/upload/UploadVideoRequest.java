@@ -1,4 +1,4 @@
-package com.stream.domain.video.dto;
+package com.stream.controller.dto.upload;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class UploadVideoDto {
+public class UploadVideoRequest {
 	@NotNull(message = "확장자를 제외한 파일명을 입력해주세요. (ex. ~)")
 	private String fileName;
 	@NotNull(message = "확장자를 입력해주세요. (ex. MOV)")
@@ -15,7 +15,7 @@ public class UploadVideoDto {
 	private String description;
 
 	@Builder
-	public UploadVideoDto(String fileName, String extension, String description) {
+	public UploadVideoRequest(String fileName, String extension, String description) {
 		this.fileName = fileName;
 		this.extension = extension;
 		this.description = description;

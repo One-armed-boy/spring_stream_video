@@ -12,7 +12,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.stream.domain.video.dto.UploadVideoDto;
+import com.stream.domain.video.dto.upload.UploadVideoCommand;
 import com.stream.storage.exception.FileStreamingException;
 import com.stream.storage.exception.FileUploadException;
 
@@ -30,7 +30,7 @@ public class LocalStorageStrategy implements StorageStrategy {
 	}
 
 	@Override
-	public String uploadFileAndReturnPath(UploadVideoDto videoMetadata, MultipartFile videoForUpload) {
+	public String uploadFileAndReturnPath(UploadVideoCommand videoMetadata, MultipartFile videoForUpload) {
 		try {
 			File targetDir = new File(videoDir);
 			checkTargetDir(targetDir);

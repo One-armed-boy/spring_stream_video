@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.stream.domain.video.dto.UploadVideoDto;
+import com.stream.domain.video.dto.upload.UploadVideoCommand;
 
 public class DummyStorageStrategy implements StorageStrategy {
 	@Override
@@ -17,7 +17,7 @@ public class DummyStorageStrategy implements StorageStrategy {
 	}
 
 	@Override
-	public String uploadFileAndReturnPath(UploadVideoDto videoMetadata, MultipartFile videoForSave) {
+	public String uploadFileAndReturnPath(UploadVideoCommand videoMetadata, MultipartFile videoForSave) {
 		return Paths.get("/for-test", UUID.randomUUID() + "." + videoMetadata.getExtension()).toString();
 	}
 }
