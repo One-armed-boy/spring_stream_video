@@ -55,6 +55,8 @@ public class TestHelperTest {
 			Assertions.assertThat(role.getName().name())
 				.isIn(expectedRolesNameList);
 		}
+
+		testHelper.clearTables();
 	}
 
 	@Test
@@ -99,5 +101,7 @@ public class TestHelperTest {
 		if (memberOpt.isPresent()) {
 			Assertions.assertThat(memberOpt.get()).isEqualTo(member);
 		}
+
+		testHelper.clearTables();
 	}
 }
