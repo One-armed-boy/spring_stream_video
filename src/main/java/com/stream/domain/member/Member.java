@@ -10,7 +10,9 @@ import com.stream.domain.role.Role;
 import com.stream.domain.video.Video;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,7 +44,7 @@ public class Member {
 	private String password;
 
 	@ManyToOne
-	@JoinColumn(name = "role_id")
+	@JoinColumn(name = "role_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
 	private Role role;
 
 	@CreationTimestamp

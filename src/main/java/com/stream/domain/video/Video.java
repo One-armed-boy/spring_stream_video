@@ -8,7 +8,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.stream.domain.member.Member;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -58,7 +60,7 @@ public class Video {
 	private Date updatedAt;
 
 	@ManyToOne
-	@JoinColumn(name = "member_id")
+	@JoinColumn(name = "member_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
 	private Member member;
 
 	@Builder
