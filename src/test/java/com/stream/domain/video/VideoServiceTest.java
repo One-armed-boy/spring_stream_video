@@ -5,14 +5,20 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Example;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.stream.domain.member.Member;
+import com.stream.domain.member.MemberService;
+import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.video.dto.VideoDto;
+import com.stream.facade.SignupFacade;
 import com.stream.util.TestHelper;
 
 @Import(TestHelper.class)
@@ -20,13 +26,24 @@ import com.stream.util.TestHelper;
 class VideoServiceTest {
 	private final VideoService videoService;
 	private final VideoRepository videoRepository;
+	private final MemberService memberService;
+	private final SignupFacade signupFacade;
 	private final TestHelper testHelper;
 
 	@Autowired
-	public VideoServiceTest(VideoService videoService, VideoRepository videoRepository, TestHelper testHelper) {
+	public VideoServiceTest(VideoService videoService, VideoRepository videoRepository, MemberService memberService,
+		SignupFacade signupFacade,
+		TestHelper testHelper) {
 		this.videoService = videoService;
 		this.videoRepository = videoRepository;
+		this.memberService = memberService;
+		this.signupFacade = signupFacade;
 		this.testHelper = testHelper;
+	}
+
+	@BeforeEach
+	void initDB() {
+		testHelper.initTables();
 	}
 
 	@AfterEach
@@ -53,10 +70,15 @@ class VideoServiceTest {
 
 	@Test
 	@DisplayName("DB 내 Video 데이터가 존재 > listVideo 호출 > 데이터들 반환")
+	@Transactional
 	void testListVideo() {
 		// Given
-		Video video1 = createVideoEntity("video1");
-		Video video2 = createVideoEntity("video2");
+		var mockEmail = "test@test.com";
+		var mockPwd = "12345qwerty";
+		var member = signup(mockEmail, mockPwd);
+
+		Video video1 = createVideoEntity("video1", member);
+		Video video2 = createVideoEntity("video2", member);
 
 		List<Video> videoListForSave = List.of(video1, video2);
 		videoService.createVideo(video1, video2);
@@ -99,9 +121,14 @@ class VideoServiceTest {
 
 	@Test
 	@DisplayName("DB 내 조회할 데이터가 존재 > getVideo 호출 > 조회 성공")
+	@Transactional
 	void testGetVideo() {
 		// Given
-		Video videoForSave = createVideoEntity("video");
+		var mockEmail = "test@test.com";
+		var mockPwd = "12345qwerty";
+		var member = signup(mockEmail, mockPwd);
+
+		Video videoForSave = createVideoEntity("video", member);
 
 		videoService.createVideo(videoForSave);
 
@@ -119,10 +146,15 @@ class VideoServiceTest {
 
 	@Test
 	@DisplayName("빈 DB > createVideo 호출 > 이후 조회 시 성공")
+	@Transactional
 	void testCreateVideo() {
 		// Given
+		var mockEmail = "test@test.com";
+		var mockPwd = "12345qwerty";
+		var member = signup(mockEmail, mockPwd);
+
 		// When
-		Video videoForSave = createVideoEntity("test");
+		Video videoForSave = createVideoEntity("test", member);
 		videoService.createVideo(videoForSave);
 
 		// Then
@@ -133,13 +165,18 @@ class VideoServiceTest {
 		Assertions.assertThat(videoDto.getFileTag()).isEqualTo(videoForSave.getFileTag());
 	}
 
-	private Video createVideoEntity(String fileName) {
+	private Video createVideoEntity(String fileName, Member member) {
 		return Video.builder()
 			.fileTag(fileName)
 			.extension("MOV")
 			.path(fileName + ".MOV")
 			.size(1000)
+			.member(member)
 			.build();
 	}
 
+	private Member signup(String email, String password) {
+		signupFacade.signUp(SignupCommand.builder().email(email).password(password).build());
+		return memberService.getMemberByEmail(email);
+	}
 }
