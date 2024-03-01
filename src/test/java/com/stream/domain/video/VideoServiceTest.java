@@ -1,7 +1,6 @@
 package com.stream.domain.video;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -11,11 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Example;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.stream.domain.member.Member;
 import com.stream.domain.member.MemberService;
+import com.stream.domain.video.dto.CreateVideoCommand;
 import com.stream.domain.video.dto.VideoDto;
 import com.stream.facade.SignupFacade;
 import com.stream.util.TestHelper;
@@ -76,21 +74,20 @@ class VideoServiceTest {
 		var mockPwd = "12345qwerty";
 		var member = testHelper.signup(mockEmail, mockPwd);
 
-		Video video1 = createVideoEntity("video1", member);
+		CreateVideoCommand command1 = buildCreateCommand("video1", member.getEmail());
 		// Video.member 필드는 nullable
-		Video video2 = createVideoEntity("video2", null);
+		CreateVideoCommand command2 = buildCreateCommand("video2", null);
 
-		List<Video> videoListForSave = List.of(video1, video2);
-		videoService.createVideo(video1, video2);
+		List<Video> videoList = List.of(videoService.createVideo(command1), videoService.createVideo(command2));
 
 		// When
 		List<VideoDto> videoDtoList = videoService.listVideo();
-		List<VideoDto> videoDtoForSaveList = videoListForSave.stream().map((video) -> {
-			return VideoDto.builder().id(video.getId()).size(video.getSize()).fileTag(video.getFileTag()).build();
-		}).toList();
+		List<VideoDto> videoDtoForSaveList = videoList.stream().map((video) ->
+			VideoDto.builder().id(video.getId()).size(video.getSize()).fileTag(video.getFileTag()).build()
+		).toList();
 
 		// Then
-		Assertions.assertThat(videoDtoList.size()).isEqualTo(videoListForSave.size());
+		Assertions.assertThat(videoDtoList.size()).isEqualTo(videoList.size());
 		for (VideoDto videoDto : videoDtoList) {
 			Assertions.assertThat(videoDto.getId())
 				.isIn(videoDtoForSaveList.stream().map((video) -> video.getId()).toList());
@@ -128,20 +125,16 @@ class VideoServiceTest {
 		var mockPwd = "12345qwerty";
 		var member = testHelper.signup(mockEmail, mockPwd);
 
-		Video videoForSave = createVideoEntity("video", member);
-
-		videoService.createVideo(videoForSave);
-
-		Optional<Video> videoInDB = videoRepository.findOne(Example.of(videoForSave));
-		Assertions.assertThat(videoInDB.isPresent()).isEqualTo(true);
+		CreateVideoCommand command = buildCreateCommand("test", member.getEmail());
+		Video savedVideo = videoService.createVideo(command);
 
 		// When
-		VideoDto videoDto = videoService.getVideoMetadata(videoInDB.get().getId());
+		VideoDto videoDto = videoService.getVideoMetadata(savedVideo.getId());
 
 		// Then
-		Assertions.assertThat(videoDto.getId()).isEqualTo(videoForSave.getId());
-		Assertions.assertThat(videoDto.getFileTag()).isEqualTo(videoForSave.getFileTag());
-		Assertions.assertThat(videoDto.getExtension()).isEqualTo(videoForSave.getExtension());
+		Assertions.assertThat(videoDto.getId()).isEqualTo(savedVideo.getId());
+		Assertions.assertThat(videoDto.getFileTag()).isEqualTo(savedVideo.getFileTag());
+		Assertions.assertThat(videoDto.getExtension()).isEqualTo(savedVideo.getExtension());
 	}
 
 	@Test
@@ -154,24 +147,24 @@ class VideoServiceTest {
 		var member = testHelper.signup(mockEmail, mockPwd);
 
 		// When
-		Video videoForSave = createVideoEntity("test", member);
-		videoService.createVideo(videoForSave);
+		CreateVideoCommand command = buildCreateCommand("test", member.getEmail());
+		Video savedVideo = videoService.createVideo(command);
 
 		// Then
 		List<VideoDto> videoDtoList = videoService.listVideo();
 		Assertions.assertThat(videoDtoList.size()).isEqualTo(1);
 
 		VideoDto videoDto = videoDtoList.get(0);
-		Assertions.assertThat(videoDto.getFileTag()).isEqualTo(videoForSave.getFileTag());
+		Assertions.assertThat(videoDto.getFileTag()).isEqualTo(savedVideo.getFileTag());
 	}
 
-	private Video createVideoEntity(String fileName, Member member) {
-		return Video.builder()
+	private CreateVideoCommand buildCreateCommand(String fileName, String member) {
+		return CreateVideoCommand.builder()
 			.fileTag(fileName)
 			.extension("MOV")
 			.path(fileName + ".MOV")
 			.size(1000)
-			.member(member)
+			.memberEmail(member)
 			.build();
 	}
 }

@@ -4,12 +4,11 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stream.domain.member.MemberService;
-import com.stream.domain.video.Video;
 import com.stream.domain.video.VideoService;
+import com.stream.domain.video.dto.CreateVideoCommand;
 import com.stream.domain.video.dto.upload.UploadVideoCommand;
 import com.stream.domain.video.exception.EmptyFileUploadException;
 import com.stream.storage.StorageStrategy;
@@ -30,12 +29,12 @@ public class UploadFacade {
 		this.storageStrategy = storageStrategy;
 	}
 
-	@Transactional
-	public CompletableFuture uploadVideoSync(UploadVideoCommand command, MultipartFile videoForUpload) {
+	public CompletableFuture<Void> uploadVideoSync(UploadVideoCommand command, MultipartFile videoForUpload) {
 		try {
 			if (videoForUpload.isEmpty()) {
 				throw new EmptyFileUploadException();
 			}
+			log.info("uploadVideoSync 호출");
 			String savingPath = storageStrategy.uploadFileAndReturnPath(command, videoForUpload);
 
 			execPostSave(command, savingPath, videoForUpload.getSize());
@@ -46,14 +45,13 @@ public class UploadFacade {
 	}
 
 	private void execPostSave(UploadVideoCommand command, String targetPath, long fileSize) {
-		var userEmail = command.getMember();
-		videoService.createVideo(Video.builder()
+		videoService.createVideo(CreateVideoCommand.builder()
 			.fileTag(command.getFileName())
 			.extension(command.getExtension())
 			.path(targetPath)
 			.size(fileSize)
 			.description(command.getDescription())
-			.member(memberService.getMemberByEmail(userEmail))
+			.memberEmail(command.getMember())
 			.build());
 		// TODO: SSE를 통한 저장 완료 이벤트 처리
 	}
