@@ -1,0 +1,1 @@
+ALTER TABLE videos MODIFY COLUMN description TEXT;
