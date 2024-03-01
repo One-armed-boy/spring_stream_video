@@ -23,6 +23,7 @@ import com.stream.domain.member.dto.login.LoginResult;
 import com.stream.domain.member.dto.signup.SignupCommand;
 import com.stream.domain.video.Video;
 import com.stream.domain.video.VideoService;
+import com.stream.domain.video.dto.CreateVideoCommand;
 import com.stream.domain.video.dto.VideoDto;
 import com.stream.facade.LoginFacade;
 import com.stream.facade.SignupFacade;
@@ -93,7 +94,8 @@ public class VideoControllerTest {
 				String contentString = result.getResponse().getContentAsString();
 				ListVideoResponse response = new ObjectMapper().readValue(contentString, ListVideoResponse.class);
 				Assertions.assertThat(response)
-					.isEqualTo(videosInTable.stream().map(VideoDto::convertDomainToDto).toList());
+					.isEqualTo(
+						ListVideoResponse.create(videosInTable.stream().map(VideoDto::convertDomainToDto).toList()));
 			});
 	}
 
@@ -152,18 +154,14 @@ public class VideoControllerTest {
 	}
 
 	private List<Video> initVideoTable(List<String> videoNames) {
-		return createVideos(
-			videoNames.stream()
-				.map(name -> Video.builder()
-					.fileTag(name)
-					.extension("MOV")
-					.path("/mock-path")
-					.size(100L)
-					.build()).toList());
-	}
-
-	private List<Video> createVideos(List<Video> videos) {
-		return videoService.createVideo(videos.toArray(new Video[videos.size()]));
+		return videoNames.stream().map(videoName ->
+			videoService.createVideo(CreateVideoCommand.builder()
+				.fileTag(videoName)
+				.extension("MOV")
+				.path("/mock-path")
+				.size(100L)
+				.build())
+		).toList();
 	}
 
 	private Cookie signupAndLoginAndExtractCookie(String email, String password) {
