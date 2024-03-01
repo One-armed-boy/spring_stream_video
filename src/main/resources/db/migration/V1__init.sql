@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS videos (
     extension VARCHAR(10) NOT NULL,
     path VARCHAR(255) NOT NULL,
     size BIGINT NOT NULL,
-    description TEXT NOT NULL,
+    description TEXT,
     created_at DATETIME(6) NOT NULL,
     updated_at DATETIME(6) NOT NULL
 )
