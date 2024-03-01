@@ -22,9 +22,7 @@ public class VideoController {
 	@GetMapping(path = "/videos")
 	public ResponseEntity<ListVideoResponse> listVideo() {
 		return ResponseEntity.ok()
-			.body(ListVideoResponse.builder()
-				.videos(videoService.listVideo())
-				.build());
+			.body(ListVideoResponse.create(videoService.listVideo()));
 	}
 
 	@GetMapping(path = "/videos", params = "id")

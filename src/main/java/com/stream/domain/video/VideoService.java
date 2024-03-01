@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.stream.domain.member.Member;
+import com.stream.domain.member.MemberService;
+import com.stream.domain.video.dto.CreateVideoCommand;
 import com.stream.domain.video.dto.VideoDto;
 import com.stream.domain.video.exception.VideoNotFoundException;
 
@@ -14,9 +17,12 @@ import com.stream.domain.video.exception.VideoNotFoundException;
 public class VideoService {
 	private final VideoRepository videoRepository;
 
+	private final MemberService memberService;
+
 	@Autowired
-	public VideoService(VideoRepository videoRepository) {
+	public VideoService(VideoRepository videoRepository, MemberService memberService) {
 		this.videoRepository = videoRepository;
+		this.memberService = memberService;
 	}
 
 	public List<VideoDto> listVideo() {
@@ -41,7 +47,17 @@ public class VideoService {
 	}
 
 	@Transactional
-	public List<Video> createVideo(Video... video) {
-		return videoRepository.saveAll(List.of(video));
+	public Video createVideo(CreateVideoCommand command) {
+		var email = command.getMemberEmail();
+		Member member =
+			email == null ? null : memberService.getMemberByEmail(email);
+		return videoRepository.save(Video.builder()
+			.member(member)
+			.fileTag(command.getFileTag())
+			.extension(command.getExtension())
+			.path(command.getPath())
+			.size(command.getSize())
+			.description(command.getDescription())
+			.build());
 	}
 }
