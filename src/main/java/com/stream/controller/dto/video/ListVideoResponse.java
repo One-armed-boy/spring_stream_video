@@ -6,6 +6,7 @@ import java.util.List;
 import com.stream.domain.video.dto.VideoDto;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -13,6 +14,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
+@EqualsAndHashCode
 public class ListVideoResponse {
 	private List<Element> videos;
 
@@ -21,20 +23,25 @@ public class ListVideoResponse {
 	}
 
 	public static ListVideoResponse create(List<VideoDto> videos) {
-		return new ListVideoResponse(videos.stream().map(videoDto -> Element.builder()
-			.id(videoDto.getId())
-			.fileTag(
-				videoDto.getFileTag())
-			.extension(videoDto.getExtension())
-			.size(videoDto.getSize())
-			.member(videoDto.getMember().getEmail())
-			.createdAt(videoDto.getCreatedAt())
-			.build()).toList());
+		return new ListVideoResponse(videos.stream().map(videoDto -> {
+			var member = videoDto.getMember();
+			var memberEmail = member != null ? member.getEmail() : null;
+			return Element.builder()
+				.id(videoDto.getId())
+				.fileTag(
+					videoDto.getFileTag())
+				.extension(videoDto.getExtension())
+				.size(videoDto.getSize())
+				.member(memberEmail)
+				.createdAt(videoDto.getCreatedAt())
+				.build();
+		}).toList());
 	}
 
 	@Getter
 	@ToString
 	@NoArgsConstructor
+	@EqualsAndHashCode
 	public static class Element {
 		private long id;
 		private String fileTag;

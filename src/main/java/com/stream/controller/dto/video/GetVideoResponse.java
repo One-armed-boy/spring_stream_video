@@ -36,6 +36,8 @@ public class GetVideoResponse {
 	}
 
 	public static GetVideoResponse convertDtoToResponse(VideoDto videoDto) {
+		var member = videoDto.getMember();
+		var memberEmail = member != null ? member.getEmail() : null;
 		return GetVideoResponse.builder()
 			.id(videoDto.getId())
 			.fileTag(videoDto.getFileTag())
@@ -43,7 +45,7 @@ public class GetVideoResponse {
 			.size(videoDto.getSize())
 			.description(videoDto.getDescription())
 			.createdAt(videoDto.getCreatedAt())
-			.member(videoDto.getMember().getEmail())
+			.member(memberEmail)
 			.build();
 	}
 }
