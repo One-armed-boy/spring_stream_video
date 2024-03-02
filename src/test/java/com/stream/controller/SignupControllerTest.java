@@ -24,11 +24,13 @@ import com.stream.util.TestHelper;
 public class SignupControllerTest {
 	private final MockMvc mockMvc;
 	private final TestHelper testHelper;
+	private final ObjectMapper objectMapper;
 
 	@Autowired
-	public SignupControllerTest(MockMvc mockMvc, TestHelper testHelper) {
+	public SignupControllerTest(MockMvc mockMvc, TestHelper testHelper, ObjectMapper objectMapper) {
 		this.mockMvc = mockMvc;
 		this.testHelper = testHelper;
+		this.objectMapper = objectMapper;
 	}
 
 	@BeforeEach
@@ -69,7 +71,7 @@ public class SignupControllerTest {
 	}
 
 	private RequestBuilder buildSignupApiReq(String email, String password) throws Exception {
-		String content = new ObjectMapper().writeValueAsString(
+		String content = objectMapper.writeValueAsString(
 			SignupRequest.builder().email(email).inputPassword(password).build());
 		return MockMvcRequestBuilders.post("/sign-up")
 			.contentType(MediaType.APPLICATION_JSON)

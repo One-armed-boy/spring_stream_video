@@ -28,13 +28,15 @@ public class LoginControllerTest {
 	private final MockMvc mockMvc;
 	private final TestHelper testHelper;
 	private final SignupFacade signupFacade;
+	private final ObjectMapper objectMapper;
 
 	@Autowired
 	public LoginControllerTest(MockMvc mockMvc, TestHelper testHelper,
-		SignupFacade signupFacade) {
+		SignupFacade signupFacade, ObjectMapper objectMapper) {
 		this.mockMvc = mockMvc;
 		this.testHelper = testHelper;
 		this.signupFacade = signupFacade;
+		this.objectMapper = objectMapper;
 	}
 
 	@BeforeEach
@@ -91,7 +93,7 @@ public class LoginControllerTest {
 	}
 
 	private RequestBuilder buildLoginApiReq(String email, String password) throws Exception {
-		String content = new ObjectMapper().writeValueAsString(
+		String content = objectMapper.writeValueAsString(
 			LoginRequest.builder().email(email).inputPassword(password).build());
 		return MockMvcRequestBuilders.post("/login").contentType(MediaType.APPLICATION_JSON).content(content);
 	}
