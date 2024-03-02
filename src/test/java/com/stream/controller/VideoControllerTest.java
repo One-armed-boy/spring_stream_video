@@ -105,8 +105,7 @@ public class VideoControllerTest {
 		// given
 		initVideoTable(List.of("video_sample"));
 		// when
-		mockMvc.perform(MockMvcRequestBuilders.get("/videos")
-				.param("id", String.valueOf(1)))
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos/" + 1))
 			// then
 			.andExpect(MockMvcResultMatchers.status().isForbidden());
 	}
@@ -122,9 +121,8 @@ public class VideoControllerTest {
 		var cookie = signupAndLoginAndExtractCookie(mockEmail, mockPwd);
 
 		// when
-		mockMvc.perform(MockMvcRequestBuilders.get("/videos")
-				.cookie(cookie)
-				.param("id", String.valueOf((video.getId() + 1))))
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos/" + (video.getId() + 1))
+				.cookie(cookie))
 			// then
 			.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
@@ -140,9 +138,8 @@ public class VideoControllerTest {
 		var cookie = signupAndLoginAndExtractCookie(mockEmail, mockPwd);
 
 		// when
-		mockMvc.perform(MockMvcRequestBuilders.get("/videos")
-				.cookie(cookie)
-				.param("id", String.valueOf(video.getId())))
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos/" + video.getId())
+				.cookie(cookie))
 			// then
 			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 			.andDo(result -> {
