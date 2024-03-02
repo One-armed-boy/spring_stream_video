@@ -16,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.stream.exception.BaseException;
 import com.stream.security.jwt.exception.AccessTokenNotFoundException;
 import com.stream.security.jwt.exception.JwtAuthWrapperException;
+import com.stream.swagger.SwaggerMetadata;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -72,6 +73,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
 		String path = request.getRequestURI();
-		return path.equals("/login") || path.equals("/sign-up");
+		return path.equals("/login") || path.equals("/sign-up")
+			|| SwaggerMetadata.getSwaggerPathPrefixes().stream()
+			.anyMatch(path::startsWith);
 	}
 }
