@@ -25,7 +25,7 @@ public class UploadController {
 		this.securityContextHelper = securityContextHelper;
 	}
 
-	@PostMapping(path = "/videos/upload")
+	@PostMapping(path = "/videos/upload", consumes = "multipart/form-data")
 	public ResponseEntity uploadVideo(@Valid @RequestPart(value = "videoMetadata") UploadVideoRequest request,
 		@RequestPart(value = "videoFile") MultipartFile videoFile) {
 		var member = securityContextHelper.getMember();
