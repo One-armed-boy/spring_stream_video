@@ -3,7 +3,7 @@ package com.stream.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stream.controller.dto.video.GetVideoResponse;
@@ -25,8 +25,8 @@ public class VideoController {
 			.body(ListVideoResponse.create(videoService.listVideo()));
 	}
 
-	@GetMapping(path = "/videos", params = "id")
-	public ResponseEntity<GetVideoResponse> getVideo(@RequestParam long id) {
+	@GetMapping(path = "/videos/{id}")
+	public ResponseEntity<GetVideoResponse> getVideo(@PathVariable long id) {
 		return ResponseEntity.ok()
 			.body(GetVideoResponse.convertDtoToResponse(videoService.getVideoMetadata(id)));
 

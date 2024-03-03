@@ -41,16 +41,18 @@ public class VideoControllerTest {
 	private final VideoService videoService;
 	private final LoginFacade loginFacade;
 	private final SignupFacade signupFacade;
+	private final ObjectMapper objectMapper;
 
 	@Autowired
 	public VideoControllerTest(MockMvc mockMvc, TestHelper testHelper,
 		VideoService videoService,
-		LoginFacade loginFacade, SignupFacade signupFacade) {
+		LoginFacade loginFacade, SignupFacade signupFacade, ObjectMapper objectMapper) {
 		this.mockMvc = mockMvc;
 		this.testHelper = testHelper;
 		this.videoService = videoService;
 		this.loginFacade = loginFacade;
 		this.signupFacade = signupFacade;
+		this.objectMapper = objectMapper;
 	}
 
 	@BeforeEach
@@ -92,7 +94,7 @@ public class VideoControllerTest {
 			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 			.andDo(result -> {
 				String contentString = result.getResponse().getContentAsString();
-				ListVideoResponse response = new ObjectMapper().readValue(contentString, ListVideoResponse.class);
+				ListVideoResponse response = objectMapper.readValue(contentString, ListVideoResponse.class);
 				Assertions.assertThat(response)
 					.isEqualTo(
 						ListVideoResponse.create(videosInTable.stream().map(VideoDto::convertDomainToDto).toList()));
@@ -105,8 +107,7 @@ public class VideoControllerTest {
 		// given
 		initVideoTable(List.of("video_sample"));
 		// when
-		mockMvc.perform(MockMvcRequestBuilders.get("/videos")
-				.param("id", String.valueOf(1)))
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos/" + 1))
 			// then
 			.andExpect(MockMvcResultMatchers.status().isForbidden());
 	}
@@ -122,9 +123,8 @@ public class VideoControllerTest {
 		var cookie = signupAndLoginAndExtractCookie(mockEmail, mockPwd);
 
 		// when
-		mockMvc.perform(MockMvcRequestBuilders.get("/videos")
-				.cookie(cookie)
-				.param("id", String.valueOf((video.getId() + 1))))
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos/" + (video.getId() + 1))
+				.cookie(cookie))
 			// then
 			.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
@@ -140,13 +140,12 @@ public class VideoControllerTest {
 		var cookie = signupAndLoginAndExtractCookie(mockEmail, mockPwd);
 
 		// when
-		mockMvc.perform(MockMvcRequestBuilders.get("/videos")
-				.cookie(cookie)
-				.param("id", String.valueOf(video.getId())))
+		mockMvc.perform(MockMvcRequestBuilders.get("/videos/" + video.getId())
+				.cookie(cookie))
 			// then
 			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 			.andDo(result -> {
-				GetVideoResponse videoResponse = new ObjectMapper().readValue(result.getResponse().getContentAsString(),
+				GetVideoResponse videoResponse = objectMapper.readValue(result.getResponse().getContentAsString(),
 					GetVideoResponse.class);
 				Assertions.assertThat(videoResponse)
 					.isEqualTo(GetVideoResponse.convertDtoToResponse(VideoDto.convertDomainToDto(video)));
