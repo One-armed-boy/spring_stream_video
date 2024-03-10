@@ -16,6 +16,8 @@ public class OctetStreamReadMsgConverter extends AbstractJackson2HttpMessageConv
 		super(objectMapper, MediaType.APPLICATION_OCTET_STREAM);
 	}
 
+	// 기존 application/octet-stream 타입을 쓰기로 다루는 메시지 컨버터가 이미 존재 (ByteArrayHttpMessageConverter)
+	// 따라서 해당 컨버터는 쓰기 작업에는 이용하면 안됨
 	@Override
 	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
 		return false;
